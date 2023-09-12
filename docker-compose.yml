@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  db:
+    container_name: DeXy-mysql
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: 'DeXy'
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    ports:
+      - '3306:3306'
