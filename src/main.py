@@ -4,14 +4,22 @@ from config.core import Setting
 from utils.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 from routers import (
-    shopping_cart_item_router,
+    # shopping_cart_item_router,
     user_router,
-    category_router,
-    transaction_router,
-    item_router,
-    offer_router,
+    # category_router,
+    # transaction_router,
+    # item_router,
+    # offer_router,
 )  # Import the transaction_router here
 import sys
+from models import (
+    shopping_cart_item_model,
+    user_model,
+    category_model,
+    transaction_model,
+    item_model,
+    offer_model,
+)  # Import the transaction_model here
 
 sys.dont_write_bytecode = True
 
@@ -24,19 +32,6 @@ def create_table():
 def include_router(app: FastAPI):
     logger.debug("Including Routers")
     app.include_router(user_router.router, tags=["User"], prefix="/api/v1")
-    app.include_router(
-        category_router.router, tags=["Category"], prefix="/api/v1"
-    )
-    app.include_router(item_router.router, tags=["Item"], prefix="/api/v1")
-    app.include_router(
-        shopping_cart_item_router.router,
-        tags=["Shopping Cart"],
-        prefix="/api/v1",
-    )
-    app.include_router(
-        transaction_router.router, tags=["Transaction"], prefix="/api/v1"
-    )
-    app.include_router(offer_router.router, tags=["Offer"], prefix="/api/v1")
 
 
 def start_application():

@@ -1,16 +1,16 @@
-from sqlalchemy import Column, Integer, ForeignKey, Date
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, ForeignKey, Date, Double
+from sqlalchemy.orm import relationship, Mapped
 from utils.database import BaseModel
 from datetime import date
 
 
-class Transaction(BaseModel):
+class TransactionModel(BaseModel):
     __tablename__ = "Transactions"
 
     transaction_id = Column(Integer, primary_key=True, nullable=False)
     transaction_event = Column(Integer, nullable=False)
     transaction_item_name = Column(Integer, nullable=False)
-    transaction_price = Column(Integer, nullable=False)
+    transaction_price = Column(Double, nullable=False)
     transaction_from_user_id = Column(
         Integer, ForeignKey("Users.user_id"), nullable=False
     )
@@ -19,8 +19,17 @@ class Transaction(BaseModel):
     )
     transaction_date = Column(Date, nullable=False)
 
-    from_user = relationship("User", back_populates="transactions_sent")
-    to_user = relationship("User", back_populates="transactions_received")
+    from_user = relationship(
+        "UserModel",
+        primaryjoin="UserModel.user_id == TransactionModel.transaction_from_user_id",
+        back_populates="transactions_sent",
+    )
+
+    to_user = relationship(
+        "UserModel",
+        primaryjoin="UserModel.user_id == TransactionModel.transaction_to_user_id",
+        back_populates="transactions_received",
+    )
 
     def __init__(
         self,

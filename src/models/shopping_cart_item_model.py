@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 from utils.database import BaseModel
 
 
-class ShoppingCartItem(BaseModel):
-    __tablename__ = "Shopping_cart_items"
+class ShoppingCartItemModel(BaseModel):
+    __tablename__ = "ShoppingCartItems"
 
     shopping_cart_item_id = Column(Integer, primary_key=True, nullable=False)
     shopping_cart_item_user_id = Column(
@@ -12,11 +12,8 @@ class ShoppingCartItem(BaseModel):
     )
     item_id = Column(Integer, ForeignKey("Items.item_id"), nullable=False)
 
-    # Define a relationship to the User model (Shopping cart owner)
-    user = relationship("User", back_populates="shopping_cart_items")
-
-    # Define a relationship to the Item model (Shopping cart item)
-    item = relationship("Item", back_populates="shopping_cart_items")
+    user = relationship("UserModel", back_populates="shopping_cart_items")
+    item = relationship("ItemModel", back_populates="shopping_cart_item")
 
     def __init__(self, shopping_cart_item_user_id: int, item_id: int):
         self.shopping_cart_item_user_id = shopping_cart_item_user_id
