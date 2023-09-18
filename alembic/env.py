@@ -14,7 +14,8 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from models.user import User
+from models.user_model import User
+
 target_metadata = [User.metadata]
 
 # add your model's MetaData object here
