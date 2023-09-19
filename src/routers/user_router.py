@@ -1,35 +1,53 @@
-from abc import ABC
-from fastapi import APIRouter, Depends
-from fastapi_utils.cbv import cbv
-from sqlalchemy.orm import Session
-
-from utils.database import get_session
-from schemas.user.request_dto import UserCreate
+from fastapi import APIRouter, Body, File, UploadFile
+from fastapi.params import Path
+from schemas.user.request_dto import CreateUserRequestDto
+from schemas.user.response_dto import (
+    CreateUserResponseDto,
+    GetAnUserResponseDto,
+)
 from services.user_service import UserService
 
 router = APIRouter()
+user_service = UserService()
 
 
-@cbv(router)
-class UserRouter:
-    session: Session = Depends(get_session)
+@router.post("/users", status_code=201, response_model=CreateUserResponseDto)
+async def create_user(payload: CreateUserRequestDto = Body(...)):
+    return user_service.create_user(payload=payload)
 
-    @router.get("/users")
-    def get_all(self):
-        return UserService.get_all(self.session)
 
-    @router.get("/users/{id}")
-    def get_by_id(self, id: int):
-        return UserService.get_by_id()
+@router.get(
+    "/users/{wallet_address}",
+    status_code=200,
+    response_model=GetAnUserResponseDto,
+)
+async def get_an_user(
+    wallet_address: str = Path(
+        ...,
+        title="wallet_address",
+        example="0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d",
+    )
+):
+    return user_service.get_an_user(wallet_address=wallet_address)
 
-    @router.post("/users")
-    def create_user(self, payload: UserCreate):
-        return UserService.create(self.session)
 
-    @router.put("/users/{id}")
-    def update(self, id: int, payload: UserCreate):
-        return UserService.update(self.session)
-
-    @router.delete("/users/{id}")
-    def delete_by_id(self, id: int):
-        return UserService.delete_by_id(self.session)
+@router.patch(
+    "/users/{wallet_address}",
+    status_code=200,
+)
+async def update_an_user(
+    user_image: UploadFile = File(None),
+    user_name: str | None = Body(None),
+    user_email: str | None = Body(None),
+    wallet_address: str = Path(
+        ...,
+        title="wallet_address",
+        example="0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d",
+    ),
+):
+    return user_service.update_an_user(
+        wallet_address=wallet_address,
+        user_name=user_name,
+        user_email=user_email,
+        user_image=user_image,
+    )

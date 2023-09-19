@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.item_model import Item  # Assuming you have an 'Item' model defined
+from models.item_model import ItemModel
 
 
 class ItemRepository:

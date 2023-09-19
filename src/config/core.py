@@ -12,8 +12,10 @@ class CoreSetting:
     DB_HOST = environ.get("DB_HOST")
     DB_PORT = environ.get("DB_PORT")
     DB_NAME = environ.get("DB_NAME")
-    DB_CONNECTION_STR = environ.get("DB_CONNECTION_STR")
     API_ROOT_PATH = environ.get("API_ROOT_PATH")
+    DB_CONNECTION_STR = (
+        f"mysql://{DB_USER_NAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    )
 
 
 Setting = CoreSetting()

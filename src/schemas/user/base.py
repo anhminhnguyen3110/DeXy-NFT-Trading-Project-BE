@@ -1,7 +1,6 @@
-from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
-    name: str
-    user_address: str = Field(max_length=50)
+    user_name: str
+    user_wallet_address: str

@@ -24,9 +24,9 @@ class BaseModel(Base):
     )  # updated record server time at
 
 
-def get_session() -> Generator:
+def get_session():
     try:
         session = Session()
-        yield session
+        return session
     finally:
         session.close()

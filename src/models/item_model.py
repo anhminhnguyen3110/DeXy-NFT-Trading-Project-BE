@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy import (
     Column,
     Integer,
@@ -7,26 +8,23 @@ from sqlalchemy import (
     ForeignKey,
     DateTime,
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 from utils.database import BaseModel
 from datetime import datetime
 
 
-class Item(BaseModel):
+class ItemModel(BaseModel):
     __tablename__ = "Items"
 
     item_id = Column(Integer, primary_key=True, nullable=False, index=True)
     item_name = Column(String(20), nullable=False)
-    item_owner_id = Column(
-        Integer, ForeignKey("Users.user_id"), nullable=False, index=True
-    )
+    item_owner_id = Column(Integer, ForeignKey("Users.user_id"), nullable=False)
     item_image = Column(LargeBinary)
     item_description = Column(String(50))
     item_category_id = Column(
         Integer,
         ForeignKey("Categories.category_id"),
         nullable=False,
-        index=True,
     )
     item_price = Column(Float, nullable=False)
     item_price_currency = Column(String(50), nullable=False)
@@ -35,12 +33,12 @@ class Item(BaseModel):
     )
     item_created_by_address = Column(String(50), nullable=False)
 
-    owner = relationship("User", back_populates="items")
-    category = relationship("Categories", back_populates="items")
-    shopping_cart_items = relationship(
-        "ShoppingCartItem", back_populates="item"
+    user = relationship("UserModel", back_populates="items")
+    category = relationship("CategoryModel", back_populates="items")
+    shopping_cart_item = relationship(
+        "ShoppingCartItemModel", back_populates="item"
     )
-    offers = relationship("Offer", back_populates="nft_item", lazy=True)
+    offers = relationship("OfferModel", back_populates="item")
 
     def __init__(
         self,
