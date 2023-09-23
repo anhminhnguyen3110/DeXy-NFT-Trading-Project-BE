@@ -38,3 +38,7 @@ uvicorn==0.23.2
 pre-commit==3.3.3
 loguru==0.7.2
 web3==6.9.0
+eth-account==0.9.0
+eth-utils==2.2.1
+python-jose[cryptography]==3.3.0
+starlette==0.27.0

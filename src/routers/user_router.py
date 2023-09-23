@@ -6,20 +6,28 @@ from schemas.user.response_dto import (
     GetAnUserResponseDto,
     UpdateUserResponseDto,
 )
+from starlette import status
 from services.user_service import UserService
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/users",
+    tags=["User"],
+)
 user_service = UserService()
 
 
-@router.post("/users", status_code=201, response_model=CreateUserResponseDto)
+@router.post(
+    "/create",
+    status_code=status.HTTP_201_CREATED,
+    response_model=CreateUserResponseDto,
+)
 async def create_user(payload: CreateUserRequestDto = Body(...)):
     return user_service.create_user(payload=payload)
 
 
 @router.get(
-    "/users/{wallet_address}",
-    status_code=200,
+    "/{wallet_address}",
+    status_code=status.HTTP_200_OK,
     response_model=GetAnUserResponseDto,
 )
 async def get_an_user(
@@ -33,9 +41,8 @@ async def get_an_user(
 
 
 @router.patch(
-    "/users/{wallet_address}",
-    status_code=200,
-    response_model=UpdateUserResponseDto,
+    "/{wallet_address}",
+    status_code=status.HTTP_200_OK,
 )
 async def update_an_user(
     user_image: UploadFile = File(None),

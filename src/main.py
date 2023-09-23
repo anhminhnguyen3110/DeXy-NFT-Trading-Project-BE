@@ -4,11 +4,11 @@ from config.core import Setting
 from utils.database import engine, Base
 from fastapi.middleware.cors import CORSMiddleware
 from routers import (
-    # shopping_cart_item_router,
+    auth_router,
     user_router,
     # category_router,
     # transaction_router,
-    # item_router,
+    item_router,
     # offer_router,
 )  # Import the transaction_router here
 import sys
@@ -31,7 +31,9 @@ def create_table():
 
 def include_router(app: FastAPI):
     logger.debug("Including Routers")
-    app.include_router(user_router.router, tags=["User"], prefix="/api/v1")
+    app.include_router(user_router.router, prefix="/api/v1")
+    app.include_router(item_router.router, prefix="/api/v1")
+    app.include_router(auth_router.router, prefix="/api/v1")
 
 
 def start_application():

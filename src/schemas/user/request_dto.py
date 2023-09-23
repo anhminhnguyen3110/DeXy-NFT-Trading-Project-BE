@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, validator
 from web3 import Web3
 from fastapi import HTTPException
 from typing import Optional
+from starlette import status
 
 
 class CreateUserRequestDto(BaseModel):
@@ -16,7 +17,7 @@ class CreateUserRequestDto(BaseModel):
     def validate_wallet_address(cls, value: str) -> str:
         if not Web3.is_address(value):
             raise HTTPException(
-                status_code=422,
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail=f"Failed! Wallet address {value} is not a valid Ethereum address.",
             )
         checksum_address = Web3.to_checksum_address(value)

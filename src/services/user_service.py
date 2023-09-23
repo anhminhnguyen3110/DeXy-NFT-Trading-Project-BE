@@ -7,10 +7,10 @@ from schemas.user.response_dto import (
     GetAnUserResponseDto,
     UpdateUserResponseDto,
 )
-from fastapi.exceptions import RequestValidationError
 from utils.database import get_session
 from web3 import Web3
 import base64
+from starlette import status
 
 
 class UserService:
@@ -26,7 +26,8 @@ class UserService:
         )
         if existing_user:
             raise HTTPException(
-                status_code=400, detail=ErrorMessages.USER_ALREADY_EXISTS
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ErrorMessages.USER_ALREADY_EXISTS,
             )
 
         self.user_repo.create_user(payload)
@@ -37,7 +38,8 @@ class UserService:
 
     def get_an_user(self, wallet_address: str) -> GetAnUserResponseDto:
         if not Web3.is_address(wallet_address):
-            raise RequestValidationError(
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Failed! Wallet address {wallet_address} is not a valid Ethereum address.",
             )
         wallet_address = Web3.to_checksum_address(wallet_address)
@@ -45,7 +47,8 @@ class UserService:
         user = self.user_repo.get_user_by_wallet_address(wallet_address)
         if not user:
             raise HTTPException(
-                status_code=404, detail=ErrorMessages.USER_NOT_FOUND
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ErrorMessages.USER_NOT_FOUND,
             )
         user_image_base64 = None
         if user.user_image:
@@ -67,8 +70,9 @@ class UserService:
         self, wallet_address, user_name: str, user_email: str, user_image
     ) -> UpdateUserResponseDto:
         if not Web3.is_address(wallet_address):
-            raise RequestValidationError(
-                f"Failed! Wallet address {wallet_address} is not a valid Ethereum address."
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Failed! Wallet address {wallet_address} is not a valid Ethereum address.",
             )
         wallet_address = Web3.to_checksum_address(wallet_address)
 

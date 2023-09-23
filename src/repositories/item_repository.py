@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.item_model import ItemModel
+from schemas.item.request_dto import CreateItemRequestDto
 
 
 class ItemRepository:
@@ -9,26 +10,16 @@ class ItemRepository:
     def get_by_id(self, item_id):
         return self.db.query(Item).filter(Item.item_id == item_id).first()
 
-    def create_item(
-        self,
-        item_name,
-        item_owner_id,
-        item_category_id,
-        item_price,
-        item_price_currency,
-        item_created_by_address,
-        item_description=None,
-        item_image=None,
-    ):
+    def create_item(self, payload: CreateItemRequestDto):
         new_item = Item(
-            item_name=item_name,
-            item_owner_id=item_owner_id,
-            item_category_id=item_category_id,
-            item_price=item_price,
-            item_price_currency=item_price_currency,
-            item_created_by_address=item_created_by_address,
-            item_description=item_description,
-            item_image=item_image,
+            item_name=payload.item_name,
+            item_owner_id=payload.item_owner_id,
+            item_category_id=payload.item_category_id,
+            item_price=payload.item_price,
+            item_price_currency=payload.item_price_currency,
+            item_created_by_address=payload.item_created_by_address,
+            item_description=payload.item_description,
+            item_image=payload.item_image,
         )
         self.db.add(new_item)
         self.db.commit()
