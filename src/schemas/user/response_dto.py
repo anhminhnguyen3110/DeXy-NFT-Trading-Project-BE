@@ -3,7 +3,13 @@ from typing import Optional
 
 
 class CreateUserResponseDto(BaseModel):
-    detail: str = Field(..., example="Success! Create a new user")
+    status: str = Field(..., example="Success")
+    message: str = Field(..., example="Create a new user successfully!")
+
+
+class UpdateUserResponseDto(BaseModel):
+    status: str = Field(..., example="Success")
+    message: str = Field(..., example="Update an user successfully!")
 
 
 class SubGetAnUserResponseDto(BaseModel):

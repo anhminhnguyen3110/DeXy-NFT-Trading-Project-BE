@@ -4,6 +4,7 @@ from schemas.user.request_dto import CreateUserRequestDto
 from schemas.user.response_dto import (
     CreateUserResponseDto,
     GetAnUserResponseDto,
+    UpdateUserResponseDto,
 )
 from services.user_service import UserService
 
@@ -34,6 +35,7 @@ async def get_an_user(
 @router.patch(
     "/users/{wallet_address}",
     status_code=200,
+    response_model=UpdateUserResponseDto,
 )
 async def update_an_user(
     user_image: UploadFile = File(None),

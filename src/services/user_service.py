@@ -5,9 +5,12 @@ from schemas.user.request_dto import CreateUserRequestDto
 from schemas.user.response_dto import (
     CreateUserResponseDto,
     GetAnUserResponseDto,
+    UpdateUserResponseDto,
 )
+from fastapi.exceptions import RequestValidationError
 from utils.database import get_session
 from web3 import Web3
+import base64
 
 
 class UserService:
@@ -27,40 +30,45 @@ class UserService:
             )
 
         self.user_repo.create_user(payload)
-        return CreateUserResponseDto(detail="Success! Create a new user")
+        return {
+            "status": "success",
+            "message": "Successfully create a new user user.",
+        }
 
     def get_an_user(self, wallet_address: str) -> GetAnUserResponseDto:
         if not Web3.is_address(wallet_address):
-            raise HTTPException(
-                status_code=422,
+            raise RequestValidationError(
                 detail=f"Failed! Wallet address {wallet_address} is not a valid Ethereum address.",
             )
         wallet_address = Web3.to_checksum_address(wallet_address)
 
-        existing_user = self.user_repo.get_user_by_wallet_address(
-            wallet_address
-        )
-        if not existing_user:
+        user = self.user_repo.get_user_by_wallet_address(wallet_address)
+        if not user:
             raise HTTPException(
                 status_code=404, detail=ErrorMessages.USER_NOT_FOUND
             )
+        user_image_base64 = None
+        if user.user_image:
+            user_image_base64 = base64.b64encode(user.user_image).decode(
+                "utf-8"
+            )
+
         data = {
-            "user_id": existing_user.user_id,
-            "user_wallet_address": existing_user.user_wallet_address,
-            "user_name": existing_user.user_name,
-            "user_email": existing_user.user_email,
-            "user_image": existing_user.user_image,
+            "user_id": user.user_id,
+            "user_wallet_address": user.user_wallet_address,
+            "user_name": user.user_name,
+            "user_email": user.user_email,
+            "user_image": user_image_base64,
         }
 
         return GetAnUserResponseDto(data=data)
 
     def update_an_user(
         self, wallet_address, user_name: str, user_email: str, user_image
-    ):
+    ) -> UpdateUserResponseDto:
         if not Web3.is_address(wallet_address):
-            raise HTTPException(
-                status_code=422,
-                detail=f"Failed! Wallet address {wallet_address} is not a valid Ethereum address.",
+            raise RequestValidationError(
+                f"Failed! Wallet address {wallet_address} is not a valid Ethereum address."
             )
         wallet_address = Web3.to_checksum_address(wallet_address)
 
@@ -71,9 +79,12 @@ class UserService:
             raise HTTPException(
                 status_code=404, detail=ErrorMessages.USER_NOT_FOUND
             )
+
+        binary_file = None
         if user_image:
             binary_file = user_image.file.read()
             user_image.file.close()
+
         self.user_repo.update_an_user(
             wallet_address, user_name, user_email, binary_file
         )
