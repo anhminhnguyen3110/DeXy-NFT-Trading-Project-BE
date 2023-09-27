@@ -4,3 +4,5 @@ class ErrorMessages:
         "Failed! User with this wallet address does not exist"
     )
     INVALID_SIGNATURE = "Failed! Invalid signature"
+    CATEGORY_IS_NOT_EXISTING = "Failed! Category with this ID does not exist"
+    ITEM_CREATION_FAILED = "Failed! Item creation failed"

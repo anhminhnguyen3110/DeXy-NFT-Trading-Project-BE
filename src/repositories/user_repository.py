@@ -22,6 +22,7 @@ class UserRepository:
         self.db.add(user)
         self.db.commit()
         self.db.refresh(user)
+        return user
 
     def update_an_user(
         self, wallet_address, user_name: str, user_email: str, user_image

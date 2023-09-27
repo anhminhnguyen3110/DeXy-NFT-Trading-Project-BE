@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Body, File, UploadFile
+from typing import Annotated
+from fastapi import APIRouter, Body, File, UploadFile, Depends
 from fastapi.params import Path
 from schemas.user.request_dto import CreateUserRequestDto
 from schemas.user.response_dto import (
@@ -21,7 +22,7 @@ user_service = UserService()
     status_code=status.HTTP_201_CREATED,
     response_model=CreateUserResponseDto,
 )
-async def create_user(payload: CreateUserRequestDto = Body(...)):
+async def create_user(payload: Annotated[dict, Depends(CreateUserRequestDto)]):
     return user_service.create_user(payload=payload)
 
 
@@ -43,6 +44,7 @@ async def get_an_user(
 @router.patch(
     "/{wallet_address}",
     status_code=status.HTTP_200_OK,
+    response_model=UpdateUserResponseDto,
 )
 async def update_an_user(
     user_image: UploadFile = File(None),

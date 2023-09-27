@@ -28,7 +28,6 @@ def create_access_token(params: Dict[str, str]) -> str:
         )
         return encoded_jwt
     except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Could not create access token",

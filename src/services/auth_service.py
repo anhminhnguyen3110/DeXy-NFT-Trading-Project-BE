@@ -4,6 +4,7 @@ from constants.api_error import ErrorMessages
 from repositories.user_repository import UserRepository
 from schemas.auth.request_dto import ConnectWalletRequestDto
 from schemas.auth.response_dto import ConnectWalletResponseDto
+from schemas.user.request_dto import CreateUserRequestDto
 from utils.auth import create_access_token
 from utils.database import get_session
 from utils.web3 import Web3Service
@@ -23,10 +24,10 @@ class AuthService:
             payload.wallet_address
         )
         if existing_user == None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=ErrorMessages.USER_IS_NOT_EXISTING,
+            new_user = self.user_repo.create_user(
+                CreateUserRequestDto(user_wallet_address=payload.wallet_address)
             )
+            existing_user = new_user
 
         if not self.validate_signature(
             payload.wallet_address, payload.signature
