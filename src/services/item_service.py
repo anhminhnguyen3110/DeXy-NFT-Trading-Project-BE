@@ -1,36 +1,51 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from constants.api_error import ErrorMessages
 from repositories.item_repository import ItemRepository
 from schemas.item.response_dto import CreateItemResponseDto
 from schemas.user.request_dto import CreateUserRequestDto
+from repositories.category_repository import CategoryRepository
 from utils.database import get_session
+from starlette import status
 
 
 class ItemService:
     def __init__(self):
         self.db = get_session()
-        self.item_repo = ItemRepository(
-            self.db
-        )  # Use the appropriate ItemRepository
+        self.item_repo = ItemRepository(self.db)
+        self.category_repo = CategoryRepository(self.db)
 
     def create_item(
-        self, payload: CreateUserRequestDto
+        self, payload: CreateUserRequestDto, item_file: UploadFile, user: dict
     ) -> CreateItemResponseDto:
-        self.item_repo.create_item(payload)
-        return CreateItemResponseDto(detail="Success! Created a new item")
+        category = self.category_repo.get_category_by_id(payload.category_id)
+        if category == None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ErrorMessages.CATEGORY_IS_NOT_EXISTING,
+            )
 
-    # def get_an_item(self, item_id: int) -> GetAnItemResponseDto:
-    #     # Retrieve the item by item_id using the repository
-    #     existing_item = self.item_repo.get_item_by_id(item_id)
-    #     if not existing_item:
-    #         raise HTTPException(
-    #             status_code=404, detail=ErrorMessages.ITEM_NOT_FOUND
-    #         )
-    #     data = {
-    #         "item_id": existing_item.item_id,
-    #         "item_name": existing_item.item_name,
-    #         "item_description": existing_item.item_description,
-    #         "item_image": existing_item.item_image,
-    #     }
+        binary_file = None
+        if item_file:
+            try:
+                binary_file = item_file.file.read()
+                item_file.file.close()
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=e,
+                )
+        try:
+            id = self.item_repo.create_item(
+                payload=payload, item_file=binary_file, owner_id=user["user_id"]
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=ErrorMessages.ITEM_CREATION_FAILED,
+            )
 
-    #     return GetAnItemResponseDto(data=data)
+        return CreateItemResponseDto(
+            status="Success",
+            message="Item created successfully.",
+            id=id,
+        )

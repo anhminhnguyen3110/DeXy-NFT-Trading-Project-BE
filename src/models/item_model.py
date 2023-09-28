@@ -19,7 +19,7 @@ class ItemModel(BaseModel):
     item_id = Column(Integer, primary_key=True, nullable=False, index=True)
     item_name = Column(String(20), nullable=False)
     item_owner_id = Column(Integer, ForeignKey("Users.user_id"), nullable=False)
-    item_image = Column(LargeBinary)
+    item_image = Column(LargeBinary(length=(2**32) - 1), nullable=True)
     item_description = Column(String(50))
     item_category_id = Column(
         Integer,
