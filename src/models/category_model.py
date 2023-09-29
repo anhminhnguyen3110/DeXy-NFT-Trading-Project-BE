@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship, Mapped
 class CategoryModel(BaseModel):
     __tablename__ = "Categories"
 
-    category_id = Column(Integer, primary_key=True, nullable=False)
+    category_id = Column(Integer, primary_key=True, nullable=False)  # Index
     category_description = Column(String(255))
     category_name = Column(String(20), nullable=False)
 

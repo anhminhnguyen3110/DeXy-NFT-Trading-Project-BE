@@ -1,6 +1,8 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from models.item_model import ItemModel
 from schemas.item.request_dto import CreateItemRequestDto
+from schemas.search.request_dto import SearchRequestDto
 
 
 class ItemRepository:
@@ -20,7 +22,7 @@ class ItemRepository:
         item_file,
         owner_id: int,
         owner_address: str,
-    ):
+    ) -> int:
         if payload.currency_type is None:
             payload.currency_type = "eth"
         new_item = ItemModel(
@@ -37,3 +39,16 @@ class ItemRepository:
         self.db.commit()
         self.db.refresh(new_item)
         return new_item.item_id
+
+    def search_items(self, payload: SearchRequestDto) -> list[ItemModel]:
+        page = payload.page
+        limit = payload.limit
+        search_input = payload.search_input.lower()
+
+        query = self.db.query(ItemModel).filter(
+            func.lower(ItemModel.item_name).like(f"{search_input}%")
+        )
+
+        items = query.offset((page - 1) * limit).limit(limit).all()
+
+        return items

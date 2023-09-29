@@ -10,7 +10,7 @@ class UserModel(BaseModel):
     user_id = Column(
         Integer, primary_key=True, index=True, autoincrement=True
     )  # Index
-    user_name = Column(String(50), nullable=True)
+    user_name = Column(String(50), nullable=True, index=True)  # Index
     user_wallet_address = Column(
         String(50), nullable=False, index=True, unique=True
     )  # Index

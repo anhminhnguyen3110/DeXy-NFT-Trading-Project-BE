@@ -7,3 +7,10 @@ class ErrorMessages:
     CATEGORY_IS_NOT_EXISTING = "Failed! Category with this ID does not exist"
     ITEM_CREATION_FAILED = "Failed! Item creation failed"
     ITEM_IS_NOT_EXISTING = "Failed! Item with this ID does not exist"
+
+
+class ValidationMessages:
+    PAGE_MUST_BE_POSITIVE = "Page must be positive"
+    PAGE_MUST_BE_LESS_THAN_100 = "Page must be less than 100"
+    LIMIT_MUST_BE_POSITIVE = "Limit must be positive"
+    LIMIT_MUST_BE_LESS_THAN_100 = "Limit must be less than 100"

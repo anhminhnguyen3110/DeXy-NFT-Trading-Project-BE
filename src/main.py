@@ -6,9 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import (
     auth_router,
     user_router,
-    # category_router,
-    # transaction_router,
     item_router,
+    search_router,
+    # transaction_router,
     # offer_router,
 )  # Import the transaction_router here
 import sys
@@ -34,6 +34,7 @@ def include_router(app: FastAPI):
     app.include_router(user_router.router, prefix="/api/v1")
     app.include_router(item_router.router, prefix="/api/v1")
     app.include_router(auth_router.router, prefix="/api/v1")
+    app.include_router(search_router.router, prefix="/api/v1")
 
 
 def start_application():

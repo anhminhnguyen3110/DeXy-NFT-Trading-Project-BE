@@ -7,9 +7,9 @@ from schemas.user.response_dto import (
     GetAnUserResponseDto,
     UpdateUserResponseDto,
 )
+from utils.parse_image import parse_image_to_base64
 from utils.database import get_session
 from web3 import Web3
-import base64
 from starlette import status
 
 
@@ -50,11 +50,7 @@ class UserService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=ErrorMessages.USER_NOT_FOUND,
             )
-        user_image_base64 = None
-        if user.user_image:
-            user_image_base64 = base64.b64encode(user.user_image).decode(
-                "utf-8"
-            )
+        user_image_base64 = parse_image_to_base64(user.user_image)
 
         data = {
             "user_id": user.user_id,

@@ -1,4 +1,3 @@
-import base64
 from fastapi import HTTPException, UploadFile
 from constants.api_error import ErrorMessages
 from repositories.item_repository import ItemRepository
@@ -9,6 +8,7 @@ from schemas.item.response_dto import (
 )
 from schemas.user.request_dto import CreateUserRequestDto
 from repositories.category_repository import CategoryRepository
+from utils.parse_image import parse_image_to_base64
 from utils.database import get_session
 from starlette import status
 
@@ -66,9 +66,7 @@ class ItemService:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=ErrorMessages.ITEM_IS_NOT_EXISTING,
             )
-        item_image = None
-        if item.item_image:
-            item_image = base64.b64encode(item.item_image).decode("utf-8")
+        item_image = parse_image_to_base64(item.item_image)
         return GetAnItemResponseDto(
             data=GetAnItemDataResponseDto(
                 item_id=item.item_id,

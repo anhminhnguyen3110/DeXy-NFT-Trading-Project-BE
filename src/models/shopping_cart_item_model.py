@@ -6,7 +6,9 @@ from utils.database import BaseModel
 class ShoppingCartItemModel(BaseModel):
     __tablename__ = "ShoppingCartItems"
 
-    shopping_cart_item_id = Column(Integer, primary_key=True, nullable=False)
+    shopping_cart_item_id = Column(
+        Integer, primary_key=True, nullable=False
+    )  # Index
     shopping_cart_item_user_id = Column(
         Integer, ForeignKey("Users.user_id"), nullable=False
     )
