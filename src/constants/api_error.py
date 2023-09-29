@@ -6,3 +6,4 @@ class ErrorMessages:
     INVALID_SIGNATURE = "Failed! Invalid signature"
     CATEGORY_IS_NOT_EXISTING = "Failed! Category with this ID does not exist"
     ITEM_CREATION_FAILED = "Failed! Item creation failed"
+    ITEM_IS_NOT_EXISTING = "Failed! Item with this ID does not exist"

@@ -7,7 +7,7 @@ class ItemRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def get_by_id(self, item_id):
+    def get_item_by_id(self, item_id) -> ItemModel:
         return (
             self.db.query(ItemModel)
             .filter(ItemModel.item_id == item_id)
@@ -15,7 +15,11 @@ class ItemRepository:
         )
 
     def create_item(
-        self, payload: CreateItemRequestDto, item_file, owner_id: int
+        self,
+        payload: CreateItemRequestDto,
+        item_file,
+        owner_id: int,
+        owner_address: str,
     ):
         if payload.currency_type is None:
             payload.currency_type = "eth"
@@ -25,7 +29,7 @@ class ItemRepository:
             item_category_id=payload.category_id,
             item_price=payload.fix_price,
             item_price_currency=payload.currency_type,
-            item_created_by_address=payload.create_date,
+            item_created_by_address=owner_address,
             item_description=payload.description,
             item_image=item_file,
         )

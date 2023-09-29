@@ -41,8 +41,8 @@ class CreateItemRequestDto(BaseModel):
         description="Description of the item",
         type="string",
     )
-    
-    @model_validator(mode='before')
+
+    @model_validator(mode="before")
     @classmethod
     def validate_to_json(cls, value):
         if isinstance(value, str):
