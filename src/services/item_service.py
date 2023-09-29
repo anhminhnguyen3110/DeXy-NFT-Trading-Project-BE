@@ -1,7 +1,12 @@
+import base64
 from fastapi import HTTPException, UploadFile
 from constants.api_error import ErrorMessages
 from repositories.item_repository import ItemRepository
-from schemas.item.response_dto import CreateItemResponseDto
+from schemas.item.response_dto import (
+    CreateItemResponseDto,
+    GetAnItemDataResponseDto,
+    GetAnItemResponseDto,
+)
 from schemas.user.request_dto import CreateUserRequestDto
 from repositories.category_repository import CategoryRepository
 from utils.database import get_session
@@ -36,9 +41,13 @@ class ItemService:
                 )
         try:
             id = self.item_repo.create_item(
-                payload=payload, item_file=binary_file, owner_id=user["user_id"]
+                payload=payload,
+                item_file=binary_file,
+                owner_id=user["user_id"],
+                owner_address=user["wallet_address"],
             )
         except Exception as e:
+            print(e)
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=ErrorMessages.ITEM_CREATION_FAILED,
@@ -48,4 +57,29 @@ class ItemService:
             status="Success",
             message="Item created successfully.",
             id=id,
+        )
+
+    def get_an_item(self, item_id: int) -> GetAnItemResponseDto:
+        item = self.item_repo.get_item_by_id(item_id)
+        if item == None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=ErrorMessages.ITEM_IS_NOT_EXISTING,
+            )
+        item_image = None
+        if item.item_image:
+            item_image = base64.b64encode(item.item_image).decode("utf-8")
+        return GetAnItemResponseDto(
+            data=GetAnItemDataResponseDto(
+                item_id=item.item_id,
+                item_name=item.item_name,
+                item_owner_address=item.user.user_wallet_address,
+                item_description=item.item_description,
+                item_category_name=item.category.category_name,
+                item_fixed_price=item.item_price,
+                item_currency_type=item.item_price_currency,
+                item_created_date=item.item_created_date,
+                item_created_by_address=item.item_created_by_address,
+                item_image=item_image,
+            )
         )
