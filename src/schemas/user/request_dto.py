@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, validator
+import json
+from pydantic import BaseModel, Field, model_validator, validator
 from web3 import Web3
 from fastapi import HTTPException
 from typing import Optional
@@ -37,3 +38,10 @@ class UpdateUserRequestDto(BaseModel):
         description="Email of the user",
         type="string",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value

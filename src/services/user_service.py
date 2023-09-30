@@ -1,7 +1,7 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from constants.api_error import ErrorMessages
 from repositories.user_repository import UserRepository
-from schemas.user.request_dto import CreateUserRequestDto
+from schemas.user.request_dto import CreateUserRequestDto, UpdateUserRequestDto
 from schemas.user.response_dto import (
     CreateUserResponseDto,
     GetAnUserResponseDto,
@@ -63,18 +63,14 @@ class UserService:
         return GetAnUserResponseDto(data=data)
 
     def update_an_user(
-        self, wallet_address, user_name: str, user_email: str, user_image
+        self, payload: UpdateUserRequestDto, user_image: UploadFile, user: dict
     ) -> UpdateUserResponseDto:
-        if not Web3.is_address(wallet_address):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Failed! Wallet address {wallet_address} is not a valid Ethereum address.",
-            )
-        wallet_address = Web3.to_checksum_address(wallet_address)
+        wallet_address = user["wallet_address"]
 
         existing_user = self.user_repo.get_user_by_wallet_address(
             wallet_address
         )
+
         if not existing_user:
             raise HTTPException(
                 status_code=404, detail=ErrorMessages.USER_NOT_FOUND
@@ -85,7 +81,5 @@ class UserService:
             binary_file = user_image.file.read()
             user_image.file.close()
 
-        self.user_repo.update_an_user(
-            wallet_address, user_name, user_email, binary_file
-        )
+        self.user_repo.update_an_user(wallet_address, payload, binary_file)
         return {"status": "success", "message": "Successfully edit user."}
