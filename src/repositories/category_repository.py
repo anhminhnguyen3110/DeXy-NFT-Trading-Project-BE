@@ -12,3 +12,6 @@ class CategoryRepository:
             .filter(CategoryModel.category_id == category_id)
             .first()
         )
+
+    def get_categories(self):
+        return self.db.query(CategoryModel).all()

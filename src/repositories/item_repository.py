@@ -1,8 +1,10 @@
-from sqlalchemy import func
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 from models.item_model import ItemModel
-from schemas.item.request_dto import CreateItemRequestDto
+from schemas.item.request_dto import CreateItemRequestDto, GetItemsRequestDto
 from schemas.search.request_dto import SearchRequestDto
+from constants.pagination import SortBy
+from models.user_model import UserModel
 
 
 class ItemRepository:
@@ -52,3 +54,46 @@ class ItemRepository:
         items = query.offset((page - 1) * limit).limit(limit).all()
 
         return items
+
+    def get_items(self, payload: GetItemsRequestDto) -> list[ItemModel]:
+        query = self.db.query(ItemModel)
+
+        # Filter by category_id
+        if payload.category_id:
+            query = query.filter(
+                ItemModel.item_category_id == payload.category_id
+            )
+
+        # Filter by user_wallet_address
+        if payload.user_wallet_address:
+            query = query.join(ItemModel.user).filter(
+                UserModel.user_wallet_address == payload.user_wallet_address
+            )
+
+        # Filter by price range
+        if payload.price_start is not None:
+            query = query.filter(ItemModel.item_price >= payload.price_start)
+        if payload.price_end is not None:
+            query = query.filter(ItemModel.item_price <= payload.price_end)
+
+        # Sorting based on sort_by enum
+        if payload.sort_by == SortBy.PRICE_LOW_TO_HIGH:
+            query = query.order_by(ItemModel.item_price)
+        elif payload.sort_by == SortBy.PRICE_HIGH_TO_LOW:
+            query = query.order_by(desc(ItemModel.item_price))
+        elif payload.sort_by == SortBy.NEWEST:
+            query = query.order_by(desc(ItemModel.item_created_date))
+        elif payload.sort_by == SortBy.OLDEST:
+            query = query.order_by(ItemModel.item_created_date)
+
+        if payload.search_input:
+            search_input = payload.search_input.lower()
+            query = query.filter(
+                func.lower(ItemModel.item_name).like(f"{search_input}%")
+            )
+
+        # Pagination
+        offset = (payload.page - 1) * payload.limit
+        query = query.offset(offset).limit(payload.limit)
+
+        return query.all()

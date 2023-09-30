@@ -1,9 +1,11 @@
+from typing import Annotated
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 from fastapi.params import Path
-from schemas.item.request_dto import CreateItemRequestDto
+from schemas.item.request_dto import CreateItemRequestDto, GetItemsRequestDto
 from schemas.item.response_dto import (
     CreateItemResponseDto,
     GetAnItemResponseDto,
+    GetItemsResponseDto,
 )
 from services.item_service import ItemService
 from starlette import status
@@ -42,3 +44,12 @@ async def get_an_item(
     ),
 ):
     return item_service.get_an_item(item_id)
+
+
+@router.get(
+    "",
+    status_code=status.HTTP_200_OK,
+    response_model=GetItemsResponseDto,
+)
+async def get_items(payload: Annotated[dict, Depends(GetItemsRequestDto)]):
+    return item_service.get_items(payload)

@@ -25,30 +25,25 @@ class SearchService:
         users = self.user_repo.search_users(payload)
         items = self.item_repo.search_items(payload)
 
-        res_users: list[User] = []
-        res_items: list[Item] = []
-
-        for user in users:
-            user_image = parse_image_to_base64(user.user_image)
-            res_users.append(
-                User(
-                    user_id=user.user_id,
-                    user_name=user.user_name,
-                    user_wallet_address=user.user_wallet_address,
-                    user_image=user_image,
-                )
+        res_users = [
+            User(
+                user_id=user.user_id,
+                user_name=user.user_name,
+                user_wallet_address=user.user_wallet_address,
+                user_image=parse_image_to_base64(user.user_image),
             )
+            for user in users
+        ]
 
-        for item in items:
-            item_image = parse_image_to_base64(item.item_image)
-            res_items.append(
-                Item(
-                    item_id=item.item_id,
-                    item_name=item.item_name,
-                    item_owner_address=item.user.user_wallet_address,
-                    item_image=item_image,
-                )
+        res_items = [
+            Item(
+                item_id=item.item_id,
+                item_name=item.item_name,
+                item_owner_address=item.user.user_wallet_address,
+                item_image=parse_image_to_base64(item.item_image),
             )
+            for item in items
+        ]
 
         users_total_pages = (
             len(res_users) + payload.limit - 1

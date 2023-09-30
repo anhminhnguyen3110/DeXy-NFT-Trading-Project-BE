@@ -5,7 +5,7 @@ from constants.pagination import SortBy
 from constants.api_error import ValidationMessages
 
 
-class PaginationRequestDto(BaseModel):
+class BasePaginationRequestDto(BaseModel):
     page: Optional[int] = Field(
         1,
         description="Page number for pagination (default is 1)",
@@ -18,13 +18,6 @@ class PaginationRequestDto(BaseModel):
         description="Number of items to return per page (default is 10)",
         example=10,
         type="number",
-    )
-
-    sort_by: Optional[SortBy] = Field(
-        SortBy.PRICE_LOW_TO_HIGH,
-        description="Sort by",
-        example=SortBy.PRICE_LOW_TO_HIGH,
-        type="string",
     )
 
     @validator("page")
@@ -54,3 +47,12 @@ class PaginationRequestDto(BaseModel):
                 message=ValidationMessages.LIMIT_MUST_BE_LESS_THAN_100,
             )
         return v
+
+
+class PaginationRequestDto(BasePaginationRequestDto):
+    sort_by: Optional[SortBy] = Field(
+        SortBy.PRICE_LOW_TO_HIGH,
+        description="Sort by",
+        example=SortBy.PRICE_LOW_TO_HIGH,
+        type="string",
+    )

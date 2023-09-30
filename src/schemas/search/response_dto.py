@@ -1,7 +1,7 @@
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
-from schemas.pagination.response_dto import PaginationResponseDto
+from schemas.pagination.response_dto import BasePaginationResponseDto
 
 
 class Item(BaseModel):
@@ -58,14 +58,14 @@ class User(BaseModel):
     )
 
 
-class ItemsPaginationResponseDto(PaginationResponseDto):
+class ItemsPaginationResponseDto(BasePaginationResponseDto):
     data: List[Item] = Field(
         ...,
         description="List of items",
     )
 
 
-class UsersPaginationResponseDto(PaginationResponseDto):
+class UsersPaginationResponseDto(BasePaginationResponseDto):
     data: List[User] = Field(
         ...,
         description="List of users",

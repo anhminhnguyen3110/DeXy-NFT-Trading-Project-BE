@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
 
-class PaginationResponseDto(BaseModel):
+class BasePaginationResponseDto(BaseModel):
     total_items: int = Field(
         ...,
         description="Total number of items across all pages",
