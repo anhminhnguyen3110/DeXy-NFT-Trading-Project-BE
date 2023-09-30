@@ -1,6 +1,4 @@
-from datetime import datetime
-from typing import Optional
-from fastapi import APIRouter, Body, Depends, Form, Security, File, UploadFile
+from fastapi import APIRouter, Body, Depends, File, UploadFile
 from fastapi.params import Path
 from schemas.item.request_dto import CreateItemRequestDto
 from schemas.item.response_dto import (
@@ -20,7 +18,7 @@ item_service = ItemService()
 
 @router.post(
     "/create-item",
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     response_model=CreateItemResponseDto,
 )
 async def create_new_item(

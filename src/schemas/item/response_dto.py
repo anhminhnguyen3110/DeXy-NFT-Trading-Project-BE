@@ -26,7 +26,7 @@ class GetAnItemDataResponseDto(BaseModel):
         ...,
         example=10,
         description="ID of the created item",
-        type="integer",
+        type="number",
     )
     item_name: str = Field(
         ...,

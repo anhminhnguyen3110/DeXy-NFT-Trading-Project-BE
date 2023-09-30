@@ -16,8 +16,10 @@ from datetime import datetime
 class ItemModel(BaseModel):
     __tablename__ = "Items"
 
-    item_id = Column(Integer, primary_key=True, nullable=False, index=True)
-    item_name = Column(String(20), nullable=False)
+    item_id = Column(
+        Integer, primary_key=True, nullable=False, index=True
+    )  # Index
+    item_name = Column(String(20), nullable=False, index=True)  # Index
     item_owner_id = Column(Integer, ForeignKey("Users.user_id"), nullable=False)
     item_image = Column(LargeBinary(length=(2**32) - 1), nullable=True)
     item_description = Column(String(50))

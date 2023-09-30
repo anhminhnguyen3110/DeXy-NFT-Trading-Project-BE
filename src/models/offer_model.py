@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship, Mapped
 class OfferModel(BaseModel):
     __tablename__ = "Offers"
 
-    offer_id = Column(Integer, primary_key=True, nullable=False)
+    offer_id = Column(Integer, primary_key=True, nullable=False)  # Index
     offer_from_user_id = Column(
         Integer, ForeignKey("Users.user_id"), nullable=False
     )
