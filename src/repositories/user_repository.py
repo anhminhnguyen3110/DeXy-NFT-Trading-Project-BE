@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from models.user_model import UserModel
-from schemas.user.request_dto import CreateUserRequestDto
+from schemas.user.request_dto import CreateUserRequestDto, UpdateUserRequestDto
 from datetime import datetime
 
 from schemas.search.request_dto import SearchRequestDto
@@ -30,13 +30,13 @@ class UserRepository:
         return user
 
     def update_an_user(
-        self, wallet_address, user_name: str, user_email: str, user_image
+        self, wallet_address, payload: UpdateUserRequestDto, user_image
     ) -> None:
         user = self.get_user_by_wallet_address(wallet_address)
-        if user_name:
-            user.user_name = user_name
-        if user_email:
-            user.user_email = user_email
+        if payload.user_name:
+            user.user_name = payload.user_name
+        if payload.user_email:
+            user.user_email = payload.user_email
         if user_image:
             user.user_image = user_image
         user.updated_at = datetime.now()
