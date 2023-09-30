@@ -7,6 +7,7 @@ class ErrorMessages:
     CATEGORY_IS_NOT_EXISTING = "Failed! Category with this ID does not exist"
     ITEM_CREATION_FAILED = "Failed! Item creation failed"
     ITEM_IS_NOT_EXISTING = "Failed! Item with this ID does not exist"
+    CATEGORY_GET_FAILED = "Failed! Category get failed"
 
 
 class ValidationMessages:

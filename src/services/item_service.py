@@ -5,9 +5,12 @@ from schemas.item.response_dto import (
     CreateItemResponseDto,
     GetAnItemDataResponseDto,
     GetAnItemResponseDto,
+    GetItemsDataResponseDto,
+    GetItemsResponseDto,
 )
 from schemas.user.request_dto import CreateUserRequestDto
 from repositories.category_repository import CategoryRepository
+from schemas.item.request_dto import GetItemsRequestDto
 from utils.parse_image import parse_image_to_base64
 from utils.database import get_session
 from starlette import status
@@ -80,4 +83,28 @@ class ItemService:
                 item_created_by_address=item.item_created_by_address,
                 item_image=item_image,
             )
+        )
+
+    def get_items(self, payload: GetItemsRequestDto) -> GetItemsResponseDto:
+        items = self.item_repo.get_items(payload)
+        res_items = [
+            GetItemsDataResponseDto(
+                item_id=item.item_id,
+                item_name=item.item_name,
+                item_owner_address=item.user.user_wallet_address,
+                item_category_name=item.category.category_name,
+                item_fixed_price=item.item_price,
+                item_currency_type=item.item_price_currency,
+                # item_image=parse_image_to_base64(item.item_image),
+            )
+            for item in items
+        ]
+
+        total_pages = (len(res_items) + payload.limit - 1) // payload.limit
+
+        return GetItemsResponseDto(
+            data=res_items,
+            total_items=len(res_items),
+            item_per_page=payload.limit,
+            total_pages=total_pages,
         )

@@ -1,8 +1,8 @@
 from pydantic import Field
-from schemas.pagination.request_dto import PaginationRequestDto
+from schemas.pagination.request_dto import BasePaginationRequestDto
 
 
-class SearchRequestDto(PaginationRequestDto):
+class SearchRequestDto(BasePaginationRequestDto):
     search_input: str = Field(
         ...,
         description="Search input",

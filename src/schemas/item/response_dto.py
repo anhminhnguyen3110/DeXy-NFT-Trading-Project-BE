@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, Field
+
+from schemas.pagination.response_dto import BasePaginationResponseDto
 
 
 class CreateItemResponseDto(BaseModel):
@@ -28,47 +30,55 @@ class GetAnItemDataResponseDto(BaseModel):
         description="ID of the created item",
         type="number",
     )
+
     item_name: str = Field(
         ...,
         example="Dog space",
         description="Name of the created item",
         type="string",
     )
+
     item_owner_address: str = Field(
         ...,
         example="0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d",
         description="Address of the item owner",
         type="string",
     )
+
     item_fixed_price: float = Field(
         ...,
         example=0.009,
         description="Fixed price of the item",
         type="number",
     )
+
     item_currency_type: str = Field(
         ...,
         example="eth",
         description="Currency type of the item",
         type="string",
     )
+
     item_description: Optional[str] = Field(
         None,
         example="Lorem ipsum dolor sit amet...",
         description="Description of the item",
         type="string",
     )
+
     item_category_name: str = Field(
         ...,
         example="Animals",
         description="Category of the item",
         type="string",
     )
+
     item_created_date: datetime = Field(
         ...,
         description="Date when the item was created",
         type="date-time",
     )
+
     item_created_by_address: str = Field(
         ...,
         example="0x2aFE454D0703cE6CC651B6109d02b39a9651aE5d",
@@ -86,3 +96,58 @@ class GetAnItemDataResponseDto(BaseModel):
 
 class GetAnItemResponseDto(BaseModel):
     data: GetAnItemDataResponseDto
+
+
+class GetItemsDataResponseDto(BaseModel):
+    item_id: int = Field(
+        ...,
+        example=10,
+        description="ID of the created item",
+        type="number",
+    )
+
+    item_name: str = Field(
+        ...,
+        example="Dog space",
+        description="Name of the created item",
+        type="string",
+    )
+
+    item_owner_address: str = Field(
+        ...,
+        example="0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d",
+        description="Address of the item owner",
+        type="string",
+    )
+
+    item_fixed_price: float = Field(
+        ...,
+        example=0.009,
+        description="Fixed price of the item",
+        type="number",
+    )
+
+    item_currency_type: str = Field(
+        ...,
+        example="eth",
+        description="Currency type of the item",
+        type="string",
+    )
+
+    item_image: Optional[str] = Field(
+        None,
+        example="iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABp",
+        description="Base64 encoded image",
+        type="string",
+    )
+
+    item_category_name: str = Field(
+        ...,
+        example="Animals",
+        description="Category of the item",
+        type="string",
+    )
+
+
+class GetItemsResponseDto(BasePaginationResponseDto):
+    data: List[GetItemsDataResponseDto]

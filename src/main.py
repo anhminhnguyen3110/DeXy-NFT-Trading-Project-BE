@@ -8,7 +8,7 @@ from routers import (
     user_router,
     item_router,
     search_router,
-    # transaction_router,
+    category_router,
     # offer_router,
 )  # Import the transaction_router here
 import sys
@@ -35,6 +35,7 @@ def include_router(app: FastAPI):
     app.include_router(item_router.router, prefix="/api/v1")
     app.include_router(auth_router.router, prefix="/api/v1")
     app.include_router(search_router.router, prefix="/api/v1")
+    app.include_router(category_router.router, prefix="/api/v1")
 
 
 def start_application():
