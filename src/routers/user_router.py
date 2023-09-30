@@ -43,7 +43,7 @@ async def get_an_user(
 
 
 @router.patch(
-    "/{wallet_address}",
+    "/edit",
     status_code=status.HTTP_200_OK,
     response_model=UpdateUserResponseDto,
 )
