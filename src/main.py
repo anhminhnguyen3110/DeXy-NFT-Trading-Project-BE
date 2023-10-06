@@ -9,7 +9,7 @@ from routers import (
     item_router,
     search_router,
     category_router,
-    # offer_router,
+    shopping_cart_item_router,
 )  # Import the transaction_router here
 import sys
 from models import (
@@ -36,6 +36,7 @@ def include_router(app: FastAPI):
     app.include_router(auth_router.router, prefix="/api/v1")
     app.include_router(search_router.router, prefix="/api/v1")
     app.include_router(category_router.router, prefix="/api/v1")
+    app.include_router(shopping_cart_item_router.router, prefix="/api/v1")
 
 
 def start_application():
