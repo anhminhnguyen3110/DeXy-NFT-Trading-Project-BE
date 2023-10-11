@@ -65,7 +65,7 @@ class ItemRepository:
             )
 
         # Filter by user_wallet_address
-        if payload.user_wallet_address:
+        if payload.user_wallet_address is not None:
             query = query.join(ItemModel.user).filter(
                 UserModel.user_wallet_address == payload.user_wallet_address
             )
