@@ -95,7 +95,7 @@ class ItemService:
                 item_category_name=item.category.category_name,
                 item_fixed_price=item.item_price,
                 item_currency_type=item.item_price_currency,
-                # item_image=parse_image_to_base64(item.item_image),
+                item_image=parse_image_to_base64(item.item_image),
             )
             for item in items
         ]

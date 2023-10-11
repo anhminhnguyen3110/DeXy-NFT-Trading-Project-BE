@@ -112,6 +112,8 @@ class GetItemsRequestDto(BasePaginationRequestDto):
 
     @validator("user_wallet_address")
     def validate_wallet_address(cls, value: str) -> str:
+        if value == None:
+            return value
         if not Web3Service.is_address(value):
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
