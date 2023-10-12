@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 from typing import Annotated
 from fastapi import Depends, HTTPException
-from fastapi.security import APIKeyHeader
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
 from config.core import Setting
 from starlette import status
 from typing import Dict
 
-api_key_header = APIKeyHeader(name="bearer", scheme_name="Bearer")
+security = HTTPBearer()
 
 
 def create_access_token(params: Dict[str, str]) -> str:
@@ -34,7 +34,10 @@ def create_access_token(params: Dict[str, str]) -> str:
         )
 
 
-async def get_current_user(token: Annotated[str, Depends(api_key_header)]):
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    token = credentials.credentials
     try:
         payload = jwt.decode(
             token, Setting.JWT_SECRET_KEY, algorithms=[Setting.JWT_ALGORITHM]
