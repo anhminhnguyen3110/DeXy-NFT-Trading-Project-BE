@@ -40,7 +40,6 @@ class ItemModel(BaseModel):
     shopping_cart_item = relationship(
         "ShoppingCartItemModel", back_populates="item"
     )
-    offers = relationship("OfferModel", back_populates="item")
 
     def __init__(
         self,
@@ -61,3 +60,6 @@ class ItemModel(BaseModel):
         self.item_description = item_description
         self.item_image = item_image
         self.item_created_by_address = item_created_by_address
+
+    def __repr__(self):
+        return f"<Item {self.item_name}>, {self.item_owner_id}, {self.item_category_id}, {self.item_price}, {self.item_price_currency}, {self.item_description}, {self.item_created_by_address}"

@@ -5,7 +5,6 @@ from schemas.user.request_dto import CreateUserRequestDto, UpdateUserRequestDto
 from datetime import datetime
 
 from schemas.search.request_dto import SearchRequestDto
-from constants.pagination import SortBy
 
 
 class UserRepository:
@@ -51,7 +50,7 @@ class UserRepository:
         query = self.db.query(UserModel).filter(
             func.lower(UserModel.user_name).like(f"{search_input}%")
         )
-
+        users_count = query.count()
         users = query.offset((page - 1) * limit).limit(limit).all()
 
-        return users
+        return [users, users_count]

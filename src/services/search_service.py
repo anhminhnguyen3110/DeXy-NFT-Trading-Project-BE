@@ -22,8 +22,8 @@ class SearchService:
     def search_users_and_items(
         self, payload: SearchRequestDto
     ) -> SearchResponseDto:
-        users = self.user_repo.search_users(payload)
-        items = self.item_repo.search_items(payload)
+        [users, users_count] = self.user_repo.search_users(payload)
+        [items, items_count] = self.item_repo.search_items(payload)
 
         res_users = [
             UserSearchDto(
@@ -45,24 +45,15 @@ class SearchService:
             for item in items
         ]
 
-        users_total_pages = (
-            len(res_users) + payload.limit - 1
-        ) // payload.limit
-        items_total_pages = (
-            len(res_items) + payload.limit - 1
-        ) // payload.limit
-
         return SearchResponseDto(
             users=UsersPaginationResponseDto(
                 data=res_users,
-                total_items=len(res_users),
-                item_per_page=payload.limit,
-                total_pages=users_total_pages,
+                total_items=users_count,
+                items_per_page=payload.limit,
             ),
             items=ItemsPaginationResponseDto(
                 data=res_items,
-                total_items=len(res_items),
-                item_per_page=payload.limit,
-                total_pages=items_total_pages,
+                total_items=items_count,
+                items_per_page=payload.limit,
             ),
         )

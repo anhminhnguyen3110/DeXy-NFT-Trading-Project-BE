@@ -50,10 +50,10 @@ class ItemRepository:
         query = self.db.query(ItemModel).filter(
             func.lower(ItemModel.item_name).like(f"{search_input}%")
         )
-
+        items_count = query.count()
         items = query.offset((page - 1) * limit).limit(limit).all()
 
-        return items
+        return [items, items_count]
 
     def get_items(self, payload: GetItemsRequestDto) -> list[ItemModel]:
         query = self.db.query(ItemModel)
@@ -93,7 +93,8 @@ class ItemRepository:
             )
 
         # Pagination
+        count_query = query
         offset = (payload.page - 1) * payload.limit
         query = query.offset(offset).limit(payload.limit)
 
-        return query.all()
+        return [query.all(), count_query.count()]

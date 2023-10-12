@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from typing import Generator
 from config.core import Setting
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, DateTime
+from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
 
 engine = create_engine(

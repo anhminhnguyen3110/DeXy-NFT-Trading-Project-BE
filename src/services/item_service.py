@@ -86,7 +86,7 @@ class ItemService:
         )
 
     def get_items(self, payload: GetItemsRequestDto) -> GetItemsResponseDto:
-        items = self.item_repo.get_items(payload)
+        [items, items_count] = self.item_repo.get_items(payload)
         res_items = [
             GetItemsDataResponseDto(
                 item_id=item.item_id,
@@ -100,11 +100,8 @@ class ItemService:
             for item in items
         ]
 
-        total_pages = (len(res_items) + payload.limit - 1) // payload.limit
-
         return GetItemsResponseDto(
             data=res_items,
-            total_items=len(res_items),
-            item_per_page=payload.limit,
-            total_pages=total_pages,
+            total_items=items_count,
+            items_per_page=payload.limit,
         )

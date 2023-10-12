@@ -10,16 +10,10 @@ from routers import (
     search_router,
     category_router,
     shopping_cart_item_router,
-)  # Import the transaction_router here
+    transaction_router,
+)
+from utils.contract import ContractService
 import sys
-from models import (
-    shopping_cart_item_model,
-    user_model,
-    category_model,
-    transaction_model,
-    item_model,
-    offer_model,
-)  # Import the transaction_model here
 
 sys.dont_write_bytecode = True
 
@@ -37,6 +31,7 @@ def include_router(app: FastAPI):
     app.include_router(search_router.router, prefix="/api/v1")
     app.include_router(category_router.router, prefix="/api/v1")
     app.include_router(shopping_cart_item_router.router, prefix="/api/v1")
+    app.include_router(transaction_router.router, prefix="/api/v1")
 
 
 def start_application():

@@ -17,6 +17,7 @@ class ErrorMessages:
     SHOPPING_CART_ITEM_DELETION_FAILED = (
         "Failed! Shopping cart item deletion failed"
     )
+    USER_NOT_FOUND = "Failed! User not found"
 
 
 class ValidationMessages:
