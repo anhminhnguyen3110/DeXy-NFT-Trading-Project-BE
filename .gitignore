@@ -155,3 +155,9 @@ cython_debug/
 # alembic
 alembic/versions/__pycache__/
 
+# venv files: every files in /bin/ except for migration.sh and run.sh
+bin/*
+!bin/migration.sh
+!bin/run.sh
+pyvenv.cfg
+include/*

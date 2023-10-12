@@ -1,5 +1,6 @@
 import base64
 
+
 def parse_image_to_base64(image) -> str:
     image_base64 = None
     if image:
