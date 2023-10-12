@@ -21,6 +21,7 @@ class CoreSetting:
     DB_CONNECTION_STR = (
         f"mysql://{DB_USER_NAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
+    SMART_CONTRACT = environ.get("SMART_CONTRACT")
 
 
 Setting = CoreSetting()

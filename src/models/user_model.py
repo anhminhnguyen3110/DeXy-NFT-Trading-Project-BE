@@ -18,20 +18,15 @@ class UserModel(BaseModel):
     user_email = Column(String(50), nullable=True)
 
     items = relationship("ItemModel", back_populates="user")
-    transactions_sent = relationship(
+    transactions = relationship(
         "TransactionModel",
-        back_populates="from_user",
-        primaryjoin="UserModel.user_id == TransactionModel.transaction_from_user_id",
+        back_populates="user",
+        primaryjoin="UserModel.user_id == TransactionModel.transaction_user_id",
     )
-    transactions_received = relationship(
-        "TransactionModel",
-        back_populates="to_user",
-        primaryjoin="UserModel.user_id == TransactionModel.transaction_to_user_id",
-    )
+
     shopping_cart_items = relationship(
         "ShoppingCartItemModel", back_populates="user"
     )
-    offers = relationship("OfferModel", back_populates="user")
 
     def __init__(
         self,

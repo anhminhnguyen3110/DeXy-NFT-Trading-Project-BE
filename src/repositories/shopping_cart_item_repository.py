@@ -62,6 +62,7 @@ class ShoppingCartItemRepository:
         return (
             self.db.query(
                 ShoppingCartItemModel.shopping_cart_item_id,
+                ItemModel.item_id.label("item_id"),
                 ItemModel.item_name.label("item_name"),
                 ItemModel.item_price.label("item_price"),
                 ItemModel.item_price_currency.label("item_price_currency"),

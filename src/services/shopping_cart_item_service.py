@@ -115,7 +115,7 @@ class ShoppingCartItemService:
         for item in shopping_cart_list:
             item_list.append(
                 ShoppingCartItemResponseDto(
-                    item_id=item.shopping_cart_item_id,  # Corrected item_id reference
+                    item_id=item.item_id,
                     item_name=item.item_name,
                     item_fixed_price=item.item_price,
                     item_currency_type=item.item_price_currency,
