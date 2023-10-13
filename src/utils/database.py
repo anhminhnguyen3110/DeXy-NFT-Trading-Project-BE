@@ -26,6 +26,7 @@ class BaseModel(Base):
 def get_session():
     try:
         session = Session()
+        session.autoflush = True
         return session
     finally:
         session.close()

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from utils.database import BaseModel
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.orm import relationship
 
 
 class CategoryModel(BaseModel):
@@ -12,9 +12,6 @@ class CategoryModel(BaseModel):
 
     items = relationship("ItemModel", back_populates="category")
 
-    def __init__(
-        self, category_id: int, category_description: str, category_name: str
-    ):
-        self.category_id = category_id
+    def __init__(self, category_description: str, category_name: str):
         self.category_description = category_description
         self.category_name = category_name
