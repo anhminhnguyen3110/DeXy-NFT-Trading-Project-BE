@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from repositories.category_repository import CategoryRepository
 from schemas.category.request_dto import CreateCategoryRequestDto
 from schemas.category.response_dto import (
+    CategoryDataResponseDto,
     CreateCategoryResponseDto,
     GetCategoryResponseDto,
 )
@@ -25,16 +26,17 @@ class CategoryService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=ErrorMessages.CATEGORY_GET_FAILED,
             )
+            
         res_categories = [
-            GetCategoryResponseDto(
+            CategoryDataResponseDto(
                 category_id=category.category_id,
                 category_name=category.category_name,
                 category_description=category.category_description,
             )
             for category in categories
         ]
-
-        return CategoryResponseDto(data=res_categories)
+        
+        return GetCategoryResponseDto(data=res_categories)
 
     def create_new_category(
         self, payload: CreateCategoryRequestDto
