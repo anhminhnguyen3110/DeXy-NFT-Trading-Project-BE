@@ -15,15 +15,15 @@ transactionService = TransactionService()
 
 
 @router.get(
-    "/{user_id}",
+    "/{user_wallet_address}",
     status_code=status.HTTP_200_OK,
 )
 async def get_transactions(
     pagination: Annotated[dict, Depends(BasePaginationRequestDto)],
-    user_id: int = Path(
+    user_wallet_address: str = Path(
         ...,
-        title="user_id",
-        example="1",
+        title="user_wallet_address",
+        example="0xDA70e2502Ec52C380ACcA7f998fb8271779A3168",
     ),
 ):
-    return transactionService.get_transactions(user_id, pagination)
+    return transactionService.get_transactions(user_wallet_address, pagination)

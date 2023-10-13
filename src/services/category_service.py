@@ -26,7 +26,7 @@ class CategoryService:
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=ErrorMessages.CATEGORY_GET_FAILED,
             )
-            
+
         res_categories = [
             CategoryDataResponseDto(
                 category_id=category.category_id,
@@ -35,7 +35,7 @@ class CategoryService:
             )
             for category in categories
         ]
-        
+
         return GetCategoryResponseDto(data=res_categories)
 
     def create_new_category(

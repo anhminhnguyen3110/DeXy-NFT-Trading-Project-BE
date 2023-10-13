@@ -1,5 +1,6 @@
 from models.transaction_model import TransactionModel
 from sqlalchemy.orm import Session
+from models.user_model import UserModel
 
 from schemas.pagination.request_dto import BasePaginationRequestDto
 
@@ -18,22 +19,22 @@ class TransactionRepository:
         self.db.add(transaction)
 
     def get_transactions(
-        self, user_id: int, pagination: BasePaginationRequestDto
+        self, user_wallet_address: str, pagination: BasePaginationRequestDto
     ):
-        return [
+        query = (
             self.db.query(
-                TransactionModel.transaction_smart_contract_id.label(
-                    "transaction_smart_contract_id"
-                ),
-                TransactionModel.transaction_user_id.label(
-                    "transaction_user_id"
-                ),
+                TransactionModel.transaction_smart_contract_id.label("transaction_smart_contract_id"),
+                TransactionModel.transaction_user_id.label("transaction_user_id"),
             )
-            .filter_by(transaction_user_id=user_id)
+            .join(UserModel, UserModel.user_id == TransactionModel.transaction_user_id)
+            .filter(UserModel.user_wallet_address == user_wallet_address)
             .offset((pagination.page - 1) * pagination.limit)
             .limit(pagination.limit)
-            .all(),
-            self.db.query(TransactionModel)
-            .filter_by(transaction_user_id=user_id)
-            .count(),
-        ]
+        )
+
+        transactions = query.all()
+
+        # Calculate the total count
+        total_count = query.count()
+
+        return transactions, total_count
