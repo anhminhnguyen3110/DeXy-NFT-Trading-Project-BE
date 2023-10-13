@@ -1,5 +1,5 @@
 from config.core import Setting
-from services.event import EventService
+from services.event_service import EventService
 from utils.web3 import Web3Service
 from abi.contract_abi import contract
 import asyncio

@@ -30,6 +30,8 @@ class TransactionRepository:
                 ),
             )
             .filter_by(transaction_user_id=user_id)
+            .offset((pagination.page - 1) * pagination.limit)
+            .limit(pagination.limit)
             .all(),
             self.db.query(TransactionModel)
             .filter_by(transaction_user_id=user_id)

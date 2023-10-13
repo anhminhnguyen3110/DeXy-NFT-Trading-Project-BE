@@ -15,3 +15,12 @@ class CategoryRepository:
 
     def get_categories(self):
         return self.db.query(CategoryModel).all()
+
+    def create_category(self, category_name: str, category_description: str):
+        new_category = CategoryModel(
+            category_name=category_name,
+            category_description=category_description,
+        )
+
+        self.db.add(new_category)
+        self.db.commit()

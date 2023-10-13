@@ -25,5 +25,21 @@ class CategoryDataResponseDto(BaseModel):
     )
 
 
-class CategoryResponseDto(BaseModel):
+class GetCategoryResponseDto(BaseModel):
     data: List[CategoryDataResponseDto]
+
+
+class CreateCategoryResponseDto(BaseModel):
+    status: str = Field(
+        ...,
+        example="Success",
+        description="Status of the response",
+        type="string",
+    )
+
+    message: str = Field(
+        ...,
+        example="Operation successful!",
+        description="Description of the response message",
+        type="string",
+    )

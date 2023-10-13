@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-from typing import Annotated
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
