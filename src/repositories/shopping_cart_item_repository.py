@@ -16,7 +16,7 @@ class ShoppingCartItemRepository:
     def get_shopping_cart_items_by_user_wallet(
         self, user_wallet_address: str
     ) -> List[ShoppingCartItemModel]:
-        return (
+        item = (
             self.db.query(ShoppingCartItemModel)
             .join(
                 UserModel,
@@ -26,6 +26,9 @@ class ShoppingCartItemRepository:
             .filter(UserModel.user_wallet_address == user_wallet_address)
             .all()
         )
+        self.db.close()
+
+        return item
 
     def add_shopping_cart_item(
         self, payload: CreateShoppingCartItemRequestDto, user: dict
@@ -37,17 +40,19 @@ class ShoppingCartItemRepository:
 
         self.db.add(new_shopping_cart_item)
         self.db.commit()
+        self.db.close()
 
     def delete_shopping_cart_item(self, shopping_cart_item_id: int) -> None:
         self.db.query(ShoppingCartItemModel).filter(
             ShoppingCartItemModel.shopping_cart_item_id == shopping_cart_item_id
         ).delete()
         self.db.commit()
+        self.db.close()
 
     def get_shopping_cart_item_by_user_id_and_item_id(
         self, user_id: int, item_id: int
     ) -> ShoppingCartItemModel:
-        return (
+        items = (
             self.db.query(ShoppingCartItemModel)
             .filter(
                 ShoppingCartItemModel.shopping_cart_item_user_id == user_id,
@@ -56,10 +61,13 @@ class ShoppingCartItemRepository:
             .first()
         )
 
+        self.db.close()
+        return items
+
     def get_items_in_cart_by_user_wallet(
         self, user_wallet_address: str
     ) -> List[ItemModel]:
-        return (
+        items = (
             self.db.query(
                 ShoppingCartItemModel.shopping_cart_item_id,
                 ItemModel.item_id.label("item_id"),
@@ -82,3 +90,6 @@ class ShoppingCartItemRepository:
             .filter(UserModel.user_wallet_address == user_wallet_address)
             .all()
         )
+        self.db.close()
+
+        return items

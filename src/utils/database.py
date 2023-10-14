@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 engine = create_engine(
     url=Setting.DB_CONNECTION_STR, echo=False
 )  # echo = show-sql
-Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
 
 Base = declarative_base()
 
@@ -26,7 +26,6 @@ class BaseModel(Base):
 def get_session():
     try:
         session = Session()
-        session.autoflush = True
         return session
     finally:
         session.close()

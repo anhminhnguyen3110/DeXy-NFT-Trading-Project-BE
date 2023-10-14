@@ -17,24 +17,34 @@ class TransactionRepository:
             transaction_user_id=transaction_user_id,
         )
         self.db.add(transaction)
+        self.db.refresh(transaction)
 
     def get_transactions(
         self, user_wallet_address: str, pagination: BasePaginationRequestDto
     ):
         query = (
             self.db.query(
-                TransactionModel.transaction_smart_contract_id.label("transaction_smart_contract_id"),
-                TransactionModel.transaction_user_id.label("transaction_user_id"),
+                TransactionModel.transaction_smart_contract_id.label(
+                    "transaction_smart_contract_id"
+                ),
+                TransactionModel.transaction_user_id.label(
+                    "transaction_user_id"
+                ),
             )
-            .join(UserModel, UserModel.user_id == TransactionModel.transaction_user_id)
+            .join(
+                UserModel,
+                UserModel.user_id == TransactionModel.transaction_user_id,
+            )
             .filter(UserModel.user_wallet_address == user_wallet_address)
-            .offset((pagination.page - 1) * pagination.limit)
-            .limit(pagination.limit)
         )
 
-        transactions = query.all()
-
-        # Calculate the total count
         total_count = query.count()
 
+        transactions = (
+            query.offset((pagination.page - 1) * pagination.limit)
+            .limit(pagination.limit)
+            .all()
+        )
+
+        self.db.close()
         return transactions, total_count

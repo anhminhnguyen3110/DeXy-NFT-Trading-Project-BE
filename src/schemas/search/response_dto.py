@@ -22,8 +22,8 @@ class ItemSearchDto(BaseModel):
         example="0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d",
         type="string",
     )
-    item_image: str = Field(
-        ...,
+    item_image: Optional[str] = Field(
+        None,
         description="The image associated with the item",
         example="base64 encoded string",
         type="string",

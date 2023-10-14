@@ -7,14 +7,18 @@ class CategoryRepository:
         self.db = db
 
     def get_category_by_id(self, category_id: int) -> CategoryModel:
-        return (
+        category = (
             self.db.query(CategoryModel)
             .filter(CategoryModel.category_id == category_id)
             .first()
         )
+        self.db.close()
+        return category
 
     def get_categories(self):
-        return self.db.query(CategoryModel).all()
+        categories = self.db.query(CategoryModel).all()
+        self.db.close()
+        return categories
 
     def create_category(self, category_name: str, category_description: str):
         new_category = CategoryModel(
@@ -24,3 +28,4 @@ class CategoryRepository:
 
         self.db.add(new_category)
         self.db.commit()
+        self.db.close()
