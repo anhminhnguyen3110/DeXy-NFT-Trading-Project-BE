@@ -1,4 +1,3 @@
-from typing import List
 from sqlalchemy import (
     Column,
     Integer,
@@ -8,7 +7,7 @@ from sqlalchemy import (
     ForeignKey,
     DateTime,
 )
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.orm import relationship
 from utils.database import BaseModel
 from datetime import datetime
 

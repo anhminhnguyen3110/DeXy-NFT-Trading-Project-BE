@@ -10,7 +10,7 @@ from models.user_model import UserModel
 class ItemRepository:
     def __init__(self, db: Session):
         self.db = db
-        
+
     def close_session(self):
         self.db.close()
 
@@ -56,7 +56,7 @@ class ItemRepository:
         items = query.offset((page - 1) * limit).limit(limit)
 
         self.db.close()
-        
+
         return [items.all(), items_count.count()]
 
     def get_items(self, payload: GetItemsRequestDto) -> list[ItemModel]:
@@ -102,3 +102,7 @@ class ItemRepository:
         query = query.offset(offset).limit(payload.limit)
         self.db.close()
         return [query.all(), count_query.count()]
+
+    def get_item_by_id_maintain_session(self, item_id) -> ItemModel:
+        query = self.db.query(ItemModel).filter(ItemModel.item_id == item_id)
+        return query.first()
