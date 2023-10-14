@@ -19,17 +19,18 @@ class EventService:
         buyer = event.buyer
         item_id = event.item
 
-        item = self.item_repo.get_item_by_id(item_id)
         owner = self.user_repo.get_user_by_wallet_address(owner)
         buyer = self.user_repo.get_user_by_wallet_address(buyer)
+        item = self.item_repo.get_item_by_id_maintain_session(item_id)
 
         if owner is None or buyer is None:
+            print("Owner or buyer not found")
             return
-
-        if (
-            item is None
-            or item.user.user_wallet_address != owner.user_wallet_address
-        ):
+        if item is None:
+            print("Item not found")
+            return
+        if item.user.user_wallet_address != owner.user_wallet_address:
+            print("Owner is not the owner of the item")
             return
 
         try:
@@ -41,7 +42,6 @@ class EventService:
             )
 
             item.item_owner_id = buyer.user_id
-
             self.db.commit()
             print("Transaction added successfully")
         except Exception as e:

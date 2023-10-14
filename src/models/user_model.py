@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, LargeBinary
 from utils.database import BaseModel
-from sqlalchemy.orm import relationship, Mapped
-from typing import List
+from sqlalchemy.orm import relationship
 
 
 class UserModel(BaseModel):

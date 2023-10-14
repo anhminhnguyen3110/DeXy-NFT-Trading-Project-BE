@@ -17,7 +17,6 @@ class TransactionRepository:
             transaction_user_id=transaction_user_id,
         )
         self.db.add(transaction)
-        self.db.refresh(transaction)
 
     def get_transactions(
         self, user_wallet_address: str, pagination: BasePaginationRequestDto
