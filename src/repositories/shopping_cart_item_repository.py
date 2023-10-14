@@ -1,7 +1,7 @@
 from typing import List
 from models.item_model import ItemModel
 from models.shopping_cart_item_model import ShoppingCartItemModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from models.user_model import UserModel
 
 from schemas.shopping_cart_item.request_dto import (
@@ -67,6 +67,10 @@ class ShoppingCartItemRepository:
     def get_items_in_cart_by_user_wallet(
         self, user_wallet_address: str
     ) -> List[ItemModel]:
+        # Create aliases for UserModel
+        user_alias_1 = aliased(UserModel)
+        user_alias_2 = aliased(UserModel)
+
         items = (
             self.db.query(
                 ShoppingCartItemModel.shopping_cart_item_id,
@@ -74,12 +78,12 @@ class ShoppingCartItemRepository:
                 ItemModel.item_name.label("item_name"),
                 ItemModel.item_price.label("item_price"),
                 ItemModel.item_price_currency.label("item_price_currency"),
-                UserModel.user_wallet_address.label("user_wallet_address"),
                 ItemModel.item_image.label("item_image"),
+                user_alias_2.user_wallet_address.label("user_wallet_address"),
             )
             .join(
-                UserModel,
-                UserModel.user_id
+                user_alias_1,
+                user_alias_1.user_id
                 == ShoppingCartItemModel.shopping_cart_item_user_id,
             )
             .join(
@@ -87,9 +91,12 @@ class ShoppingCartItemRepository:
                 ItemModel.item_id
                 == ShoppingCartItemModel.shopping_cart_item_item_id,
             )
-            .filter(UserModel.user_wallet_address == user_wallet_address)
+            .join(
+                user_alias_2,
+                user_alias_2.user_id == ItemModel.item_owner_id,
+            )
+            .filter(user_alias_1.user_wallet_address == user_wallet_address)
             .all()
         )
         self.db.close()
-
         return items
