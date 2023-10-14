@@ -12,11 +12,14 @@ class UserRepository:
         self.db = db
 
     def get_user_by_wallet_address(self, wallet_address: str) -> UserModel:
-        return (
+        user = (
             self.db.query(UserModel)
             .filter(UserModel.user_wallet_address == wallet_address)
             .first()
         )
+
+        self.db.close()
+        return user
 
     def create_user(self, payload: CreateUserRequestDto) -> UserModel:
         user = UserModel(
@@ -25,6 +28,8 @@ class UserRepository:
         )
         self.db.add(user)
         self.db.commit()
+        self.db.close()
+
         return user
 
     def update_an_user(
@@ -40,8 +45,9 @@ class UserRepository:
         user.updated_at = datetime.now()
         self.db.commit()
         self.db.refresh(user)
+        self.db.close()
 
-    def search_users(self, payload: SearchRequestDto) -> list[UserModel]:
+    def search_users(self, payload: SearchRequestDto):
         page = payload.page
         limit = payload.limit
         search_input = payload.search_input.lower()
@@ -52,4 +58,5 @@ class UserRepository:
         users_count = query.count()
         users = query.offset((page - 1) * limit).limit(limit).all()
 
+        self.db.close()
         return [users, users_count]

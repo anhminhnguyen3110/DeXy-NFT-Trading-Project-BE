@@ -10,13 +10,14 @@ from models.user_model import UserModel
 class ItemRepository:
     def __init__(self, db: Session):
         self.db = db
+        
+    def close_session(self):
+        self.db.close()
 
     def get_item_by_id(self, item_id) -> ItemModel:
-        return (
-            self.db.query(ItemModel)
-            .filter(ItemModel.item_id == item_id)
-            .first()
-        )
+        query = self.db.query(ItemModel).filter(ItemModel.item_id == item_id)
+        self.db.close()
+        return query.first()
 
     def create_item(
         self,
@@ -40,9 +41,10 @@ class ItemRepository:
         self.db.add(new_item)
         self.db.commit()
         self.db.refresh(new_item)
+        self.db.close()
         return new_item.item_id
 
-    def search_items(self, payload: SearchRequestDto) -> list[ItemModel]:
+    def search_items(self, payload: SearchRequestDto):
         page = payload.page
         limit = payload.limit
         search_input = payload.search_input.lower()
@@ -50,10 +52,12 @@ class ItemRepository:
         query = self.db.query(ItemModel).filter(
             func.lower(ItemModel.item_name).like(f"{search_input}%")
         )
-        items_count = query.count()
-        items = query.offset((page - 1) * limit).limit(limit).all()
+        items_count = query
+        items = query.offset((page - 1) * limit).limit(limit)
 
-        return [items, items_count]
+        self.db.close()
+        
+        return [items.all(), items_count.count()]
 
     def get_items(self, payload: GetItemsRequestDto) -> list[ItemModel]:
         query = self.db.query(ItemModel)
@@ -96,5 +100,5 @@ class ItemRepository:
         count_query = query
         offset = (payload.page - 1) * payload.limit
         query = query.offset(offset).limit(payload.limit)
-
+        self.db.close()
         return [query.all(), count_query.count()]
