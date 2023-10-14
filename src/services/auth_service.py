@@ -24,11 +24,9 @@ class AuthService:
             payload.wallet_address
         )
         if existing_user == None:
-            new_user = self.user_repo.create_user(
+            existing_user = self.user_repo.create_user(
                 CreateUserRequestDto(user_wallet_address=payload.wallet_address)
             )
-            existing_user = new_user
-
         if not self.validate_signature(
             payload.wallet_address, payload.signature
         ):
