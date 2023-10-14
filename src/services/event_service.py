@@ -1,7 +1,9 @@
 from models.shopping_cart_item_model import ShoppingCartItemModel
 from models.transaction_model import TransactionModel
 from repositories.item_repository import ItemRepository
-from repositories.shopping_cart_item_repository import ShoppingCartItemRepository
+from repositories.shopping_cart_item_repository import (
+    ShoppingCartItemRepository,
+)
 from repositories.transaction_repository import TransactionRepository
 from repositories.user_repository import UserRepository
 from schemas.event.event_dto import TransactionItem
@@ -47,9 +49,10 @@ class EventService:
             )
 
             item.item_owner_id = buyer.user_id
-            if(shopping_cart_item is not None):
+            if shopping_cart_item is not None:
                 self.db.query(ShoppingCartItemModel).filter(
-                    ShoppingCartItemModel.shopping_cart_item_id == shopping_cart_item.shopping_cart_item_id
+                    ShoppingCartItemModel.shopping_cart_item_id
+                    == shopping_cart_item.shopping_cart_item_id
                 ).delete()
             self.db.commit()
             print("Transaction added successfully")

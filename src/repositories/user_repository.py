@@ -28,9 +28,9 @@ class UserRepository:
         )
         self.db.add(user)
         self.db.commit()
+        new_user = self.get_user_by_wallet_address(payload.user_wallet_address)
         self.db.close()
-
-        return user
+        return new_user
 
     def update_an_user(
         self, wallet_address, payload: UpdateUserRequestDto, user_image
