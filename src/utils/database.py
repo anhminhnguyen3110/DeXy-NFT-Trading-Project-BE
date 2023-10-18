@@ -8,7 +8,7 @@ from sqlalchemy.sql import func
 engine = create_engine(
     url=Setting.DB_CONNECTION_STR,
     echo=False,
-    pool_recycle=30,
+    pool_recycle=7200,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
