@@ -7,19 +7,18 @@ from schemas.category.response_dto import (
     GetCategoryResponseDto,
 )
 from constants.api_error import ErrorMessages
-from utils.database import get_session
+
 from starlette import status
 
 
 class CategoryService:
     def __init__(self) -> None:
-        self.db = get_session()
-        self.category_repo = CategoryRepository(self.db)
+        self.category_repo = CategoryRepository()
         pass
 
-    def get_categories(self) -> GetCategoryResponseDto:
+    def get_categories(self, db) -> GetCategoryResponseDto:
         try:
-            categories = self.category_repo.get_categories()
+            categories = self.category_repo.get_categories(db)
         except Exception as e:
             print(e)
             raise HTTPException(
@@ -39,12 +38,13 @@ class CategoryService:
         return GetCategoryResponseDto(data=res_categories)
 
     def create_new_category(
-        self, payload: CreateCategoryRequestDto
+        self, payload: CreateCategoryRequestDto, db
     ) -> CreateCategoryResponseDto:
         try:
             self.category_repo.create_category(
                 category_name=payload.name,
                 category_description=payload.description,
+                db=db,
             )
             return CreateCategoryResponseDto(
                 status="Success",

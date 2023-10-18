@@ -6,26 +6,27 @@ from schemas.auth.request_dto import ConnectWalletRequestDto
 from schemas.auth.response_dto import ConnectWalletResponseDto
 from schemas.user.request_dto import CreateUserRequestDto
 from utils.auth import create_access_token
-from utils.database import get_session
 from utils.web3 import Web3Service
 from starlette import status
 
 
 class AuthService:
     def __init__(self):
-        self.db = get_session()
-        self.user_repo = UserRepository(self.db)
+        self.user_repo = UserRepository()
         pass
 
     def connect_wallet(
-        self, payload: ConnectWalletRequestDto
+        self, payload: ConnectWalletRequestDto, db
     ) -> ConnectWalletResponseDto:
         existing_user = self.user_repo.get_user_by_wallet_address(
-            payload.wallet_address
+            payload.wallet_address, db
         )
         if existing_user == None:
             existing_user = self.user_repo.create_user(
-                CreateUserRequestDto(user_wallet_address=payload.wallet_address)
+                CreateUserRequestDto(
+                    user_wallet_address=payload.wallet_address
+                ),
+                db,
             )
         if not self.validate_signature(
             payload.wallet_address, payload.signature

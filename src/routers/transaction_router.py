@@ -1,10 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Path
 from starlette import status
-
 from schemas.pagination.request_dto import BasePaginationRequestDto
 from services.transaction_service import TransactionService
-
+from sqlalchemy.orm import Session
+from utils.database import get_db
 
 router = APIRouter(
     prefix="/transactions",
@@ -25,5 +25,8 @@ async def get_transactions(
         title="user_wallet_address",
         example="0xDA70e2502Ec52C380ACcA7f998fb8271779A3168",
     ),
+    db: Session = Depends(get_db),
 ):
-    return transactionService.get_transactions(user_wallet_address, pagination)
+    return transactionService.get_transactions(
+        user_wallet_address, pagination, db
+    )

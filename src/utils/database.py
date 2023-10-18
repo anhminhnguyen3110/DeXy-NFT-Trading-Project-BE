@@ -10,7 +10,9 @@ engine = create_engine(
     echo=False,
     pool_recycle=7200,
     pool_pre_ping=True,
-)  # echo = show-sql
+    pool_size=10,
+    max_overflow=20,
+)
 Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
 
 Base = declarative_base()
@@ -26,9 +28,9 @@ class BaseModel(Base):
     )  # updated record server time at
 
 
-def get_session():
+def get_db():
+    db = Session()
     try:
-        session = Session()
-        return session
+        yield db
     finally:
-        session.close()
+        db.close()
