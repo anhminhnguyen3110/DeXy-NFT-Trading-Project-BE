@@ -3,6 +3,7 @@ from services.event_service import EventService
 from utils.web3 import Web3Service
 from abi.contract_abi import contract
 import asyncio
+from utils.database import get_db
 
 
 class ContractService:
@@ -20,8 +21,9 @@ class ContractService:
         while True:
             event_logs = event_filter.get_new_entries()
             if event_logs:
-                for event in event_logs:
-                    await self.eventService.handler(event["args"])
+                for db in get_db():
+                    for event in event_logs:
+                        await self.eventService.handler(event["args"], db)
 
             await asyncio.sleep(1)
 
