@@ -6,7 +6,10 @@ from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
 
 engine = create_engine(
-    url=Setting.DB_CONNECTION_STR, echo=False
+    url=Setting.DB_CONNECTION_STR,
+    echo=False,
+    pool_recycle=7200,
+    pool_pre_ping=True,
 )  # echo = show-sql
 Session = sessionmaker(bind=engine, autoflush=True, autocommit=False)
 
