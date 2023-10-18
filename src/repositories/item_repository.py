@@ -8,15 +8,9 @@ from models.user_model import UserModel
 
 
 class ItemRepository:
-    def __init__(self, db: Session):
-        self.db = db
+    def get_item_by_id(self, item_id, db) -> ItemModel:
+        query = db.query(ItemModel).filter(ItemModel.item_id == item_id)
 
-    def close_session(self):
-        self.db.close()
-
-    def get_item_by_id(self, item_id) -> ItemModel:
-        query = self.db.query(ItemModel).filter(ItemModel.item_id == item_id)
-        self.db.close()
         return query.first()
 
     def create_item(
@@ -25,6 +19,7 @@ class ItemRepository:
         item_file,
         owner_id: int,
         owner_address: str,
+        db,
     ) -> int:
         if payload.currency_type is None:
             payload.currency_type = "eth"
@@ -38,29 +33,27 @@ class ItemRepository:
             item_description=payload.description,
             item_image=item_file,
         )
-        self.db.add(new_item)
-        self.db.commit()
-        self.db.refresh(new_item)
-        self.db.close()
+        db.add(new_item)
+        db.commit()
+        db.refresh(new_item)
+
         return new_item.item_id
 
-    def search_items(self, payload: SearchRequestDto):
+    def search_items(self, payload: SearchRequestDto, db):
         page = payload.page
         limit = payload.limit
         search_input = payload.search_input.lower()
 
-        query = self.db.query(ItemModel).filter(
+        query = db.query(ItemModel).filter(
             func.lower(ItemModel.item_name).like(f"{search_input}%")
         )
         items_count = query
         items = query.offset((page - 1) * limit).limit(limit)
 
-        self.db.close()
-
         return [items.all(), items_count.count()]
 
-    def get_items(self, payload: GetItemsRequestDto) -> list[ItemModel]:
-        query = self.db.query(ItemModel)
+    def get_items(self, payload: GetItemsRequestDto, db) -> list[ItemModel]:
+        query = db.query(ItemModel)
 
         # Filter by category_id
         if payload.category_id:
@@ -100,9 +93,9 @@ class ItemRepository:
         count_query = query
         offset = (payload.page - 1) * payload.limit
         query = query.offset(offset).limit(payload.limit)
-        self.db.close()
+
         return [query.all(), count_query.count()]
 
-    def get_item_by_id_maintain_session(self, item_id) -> ItemModel:
-        query = self.db.query(ItemModel).filter(ItemModel.item_id == item_id)
+    def get_item_by_id_maintain_session(self, item_id, db) -> ItemModel:
+        query = db.query(ItemModel).filter(ItemModel.item_id == item_id)
         return query.first()

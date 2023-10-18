@@ -14,7 +14,7 @@ from schemas.shopping_cart_item.response_dto import (
     GetShoppingCartItemsResponseDto,
     ShoppingCartItemResponseDto,
 )
-from utils.database import get_session
+
 from starlette import status
 from fastapi import HTTPException
 
@@ -23,15 +23,14 @@ from utils.parse_image import parse_image_to_base64
 
 class ShoppingCartItemService:
     def __init__(self):
-        self.db = get_session()
-        self.shopping_cart_item_repo = ShoppingCartItemRepository(self.db)
-        self.item_repo = ItemRepository(self.db)
+        self.shopping_cart_item_repo = ShoppingCartItemRepository()
+        self.item_repo = ItemRepository()
 
     def add_item_to_cart(
-        self, payload: CreateShoppingCartItemRequestDto, user: dict
+        self, payload: CreateShoppingCartItemRequestDto, user: dict, db
     ) -> CreateShoppingCartItemsResponseDto:
         item_id = payload.item_id
-        item = self.item_repo.get_item_by_id(item_id)
+        item = self.item_repo.get_item_by_id(item_id, db)
 
         if item is None:
             raise HTTPException(
@@ -48,6 +47,7 @@ class ShoppingCartItemService:
         shopping_cart_item = self.shopping_cart_item_repo.get_shopping_cart_item_by_user_id_and_item_id(
             user["user_id"],
             item_id,
+            db,
         )
 
         if shopping_cart_item is not None:
@@ -57,7 +57,9 @@ class ShoppingCartItemService:
             )
 
         try:
-            self.shopping_cart_item_repo.add_shopping_cart_item(payload, user)
+            self.shopping_cart_item_repo.add_shopping_cart_item(
+                payload, user, db
+            )
         except Exception as e:
             print(f"Error occurred while adding item to cart: {str(e)}")
             raise HTTPException(
@@ -71,11 +73,12 @@ class ShoppingCartItemService:
         )
 
     def delete_item_from_cart(
-        self, item_id: int, user: dict
+        self, item_id: int, user: dict, db
     ) -> DeleteShoppingCartItemsResponseDto:
         shopping_cart_item = self.shopping_cart_item_repo.get_shopping_cart_item_by_user_id_and_item_id(
             user["user_id"],
             item_id,
+            db,
         )
 
         if shopping_cart_item is None:
@@ -86,7 +89,7 @@ class ShoppingCartItemService:
 
         try:
             self.shopping_cart_item_repo.delete_shopping_cart_item(
-                shopping_cart_item.shopping_cart_item_id
+                shopping_cart_item.shopping_cart_item_id, db
             )
 
         except Exception as e:
@@ -102,11 +105,11 @@ class ShoppingCartItemService:
         )
 
     def get_shopping_cart_items_by_user_wallet(
-        self, user: dict
+        self, user: dict, db
     ) -> GetShoppingCartItemsResponseDto:
         shopping_cart_list = (
             self.shopping_cart_item_repo.get_items_in_cart_by_user_wallet(
-                user["wallet_address"]
+                user["wallet_address"], db
             )
         )
 

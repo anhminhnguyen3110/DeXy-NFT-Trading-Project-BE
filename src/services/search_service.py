@@ -9,21 +9,19 @@ from schemas.search.response_dto import (
     UsersPaginationResponseDto,
 )
 from utils.parse_image import parse_image_to_base64
-from utils.database import get_session
 
 
 class SearchService:
     def __init__(self):
-        self.db = get_session()
-        self.user_repo = UserRepository(self.db)
-        self.item_repo = ItemRepository(self.db)
+        self.user_repo = UserRepository()
+        self.item_repo = ItemRepository()
         pass
 
     def search_users_and_items(
-        self, payload: SearchRequestDto
+        self, payload: SearchRequestDto, db
     ) -> SearchResponseDto:
-        [users, users_count] = self.user_repo.search_users(payload)
-        [items, items_count] = self.item_repo.search_items(payload)
+        [users, users_count] = self.user_repo.search_users(payload, db)
+        [items, items_count] = self.item_repo.search_items(payload, db)
 
         res_users = [
             UserSearchDto(

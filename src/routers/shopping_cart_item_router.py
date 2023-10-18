@@ -10,6 +10,8 @@ from schemas.shopping_cart_item.response_dto import (
 from services.shopping_cart_item_service import ShoppingCartItemService
 from utils.auth import get_current_user
 from starlette import status
+from sqlalchemy.orm import Session
+from utils.database import get_db
 
 shopping_cart_items_service = ShoppingCartItemService()
 
@@ -27,8 +29,9 @@ router = APIRouter(
 def add_item_to_cart(
     payload: CreateShoppingCartItemRequestDto,
     user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    return shopping_cart_items_service.add_item_to_cart(payload, user)
+    return shopping_cart_items_service.add_item_to_cart(payload, user, db)
 
 
 @router.get(
@@ -38,9 +41,10 @@ def add_item_to_cart(
 )
 def get_shopping_cart_items_by_user_wallet(
     user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
     return shopping_cart_items_service.get_shopping_cart_items_by_user_wallet(
-        user
+        user, db
     )
 
 
@@ -49,5 +53,9 @@ def get_shopping_cart_items_by_user_wallet(
     status_code=status.HTTP_200_OK,
     response_model=DeleteShoppingCartItemsResponseDto,
 )
-def delete_item_from_cart(item_id: int, user: dict = Depends(get_current_user)):
-    return shopping_cart_items_service.delete_item_from_cart(item_id, user)
+def delete_item_from_cart(
+    item_id: int,
+    user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return shopping_cart_items_service.delete_item_from_cart(item_id, user, db)

@@ -10,6 +10,8 @@ from schemas.item.response_dto import (
 from services.item_service import ItemService
 from starlette import status
 from utils.auth import get_current_user
+from sqlalchemy.orm import Session
+from utils.database import get_db
 
 router = APIRouter(
     prefix="/items",
@@ -27,8 +29,9 @@ async def create_new_item(
     payload: CreateItemRequestDto = Body(...),
     item_file: UploadFile = File(None),
     user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    return item_service.create_item(payload, item_file, user)
+    return item_service.create_item(payload, item_file, user, db)
 
 
 @router.get(
@@ -42,8 +45,9 @@ async def get_an_item(
         title="item_id",
         example="1",
     ),
+    db: Session = Depends(get_db),
 ):
-    return item_service.get_an_item(item_id)
+    return item_service.get_an_item(item_id=item_id, db=db)
 
 
 @router.get(
@@ -51,5 +55,8 @@ async def get_an_item(
     status_code=status.HTTP_200_OK,
     response_model=GetItemsResponseDto,
 )
-async def get_items(payload: Annotated[dict, Depends(GetItemsRequestDto)]):
-    return item_service.get_items(payload)
+async def get_items(
+    payload: Annotated[dict, Depends(GetItemsRequestDto)],
+    db: Session = Depends(get_db),
+):
+    return item_service.get_items(payload, db)

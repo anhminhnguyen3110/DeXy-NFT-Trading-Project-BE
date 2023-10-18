@@ -6,23 +6,20 @@ from schemas.pagination.request_dto import BasePaginationRequestDto
 
 
 class TransactionRepository:
-    def __init__(self, db: Session):
-        self.db = db
-
     def add_transaction(
-        self, transaction_smart_contract_id: int, transaction_user_id: int
+        self, transaction_smart_contract_id: int, transaction_user_id: int, db
     ):
         transaction = TransactionModel(
             transaction_smart_contract_id=transaction_smart_contract_id,
             transaction_user_id=transaction_user_id,
         )
-        self.db.add(transaction)
+        db.add(transaction)
 
     def get_transactions(
-        self, user_wallet_address: str, pagination: BasePaginationRequestDto
+        self, user_wallet_address: str, pagination: BasePaginationRequestDto, db
     ):
         query = (
-            self.db.query(
+            db.query(
                 TransactionModel.transaction_smart_contract_id.label(
                     "transaction_smart_contract_id"
                 ),
@@ -45,5 +42,4 @@ class TransactionRepository:
             .all()
         )
 
-        self.db.close()
         return transactions, total_count

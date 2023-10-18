@@ -12,20 +12,25 @@ from schemas.user.request_dto import CreateUserRequestDto
 from repositories.category_repository import CategoryRepository
 from schemas.item.request_dto import GetItemsRequestDto
 from utils.parse_image import parse_image_to_base64
-from utils.database import get_session
+
 from starlette import status
 
 
 class ItemService:
     def __init__(self):
-        self.db = get_session()
-        self.item_repo = ItemRepository(self.db)
-        self.category_repo = CategoryRepository(self.db)
+        self.item_repo = ItemRepository()
+        self.category_repo = CategoryRepository()
 
     def create_item(
-        self, payload: CreateUserRequestDto, item_file: UploadFile, user: dict
+        self,
+        payload: CreateUserRequestDto,
+        item_file: UploadFile,
+        user: dict,
+        db,
     ) -> CreateItemResponseDto:
-        category = self.category_repo.get_category_by_id(payload.category_id)
+        category = self.category_repo.get_category_by_id(
+            payload.category_id, db
+        )
         if category == None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -48,6 +53,7 @@ class ItemService:
                 item_file=binary_file,
                 owner_id=user["user_id"],
                 owner_address=user["wallet_address"],
+                db=db,
             )
         except Exception as e:
             print(e)
@@ -62,8 +68,8 @@ class ItemService:
             id=id,
         )
 
-    def get_an_item(self, item_id: int) -> GetAnItemResponseDto:
-        item = self.item_repo.get_item_by_id(item_id)
+    def get_an_item(self, item_id: int, db) -> GetAnItemResponseDto:
+        item = self.item_repo.get_item_by_id(item_id, db)
         if item == None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -85,8 +91,8 @@ class ItemService:
             )
         )
 
-    def get_items(self, payload: GetItemsRequestDto) -> GetItemsResponseDto:
-        [items, items_count] = self.item_repo.get_items(payload)
+    def get_items(self, payload: GetItemsRequestDto, db) -> GetItemsResponseDto:
+        [items, items_count] = self.item_repo.get_items(payload, db)
         res_items = [
             GetItemsDataResponseDto(
                 item_id=item.item_id,

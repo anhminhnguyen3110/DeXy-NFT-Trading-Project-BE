@@ -6,18 +6,17 @@ from schemas.transaction.response_dto import (
     GetTransactionsDto,
     GetTransactionsSubDto,
 )
-from utils.database import get_session
+
 from utils.web3 import Web3Service
 from starlette import status
 
 
 class TransactionService:
     def __init__(self):
-        self.db = get_session()
-        self.transaction_repo = TransactionRepository(self.db)
+        self.transaction_repo = TransactionRepository()
 
     def get_transactions(
-        self, user_wallet_address: str, pagination: BasePaginationRequestDto
+        self, user_wallet_address: str, pagination: BasePaginationRequestDto, db
     ) -> GetTransactionsDto:
         if not Web3Service.is_address(user_wallet_address):
             raise HTTPException(
@@ -32,7 +31,7 @@ class TransactionService:
             transactions,
             transaction_count,
         ] = self.transaction_repo.get_transactions(
-            user_wallet_address, pagination
+            user_wallet_address, pagination, db
         )
 
         transaction_list = [

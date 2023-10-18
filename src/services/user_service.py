@@ -8,21 +8,20 @@ from schemas.user.response_dto import (
     UpdateUserResponseDto,
 )
 from utils.parse_image import parse_image_to_base64
-from utils.database import get_session
+
 from web3 import Web3
 from starlette import status
 
 
 class UserService:
     def __init__(self):
-        self.db = get_session()
-        self.user_repo = UserRepository(self.db)
+        self.user_repo = UserRepository()
 
     def create_user(
-        self, payload: CreateUserRequestDto
+        self, payload: CreateUserRequestDto, db
     ) -> CreateUserResponseDto:
         existing_user = self.user_repo.get_user_by_wallet_address(
-            payload.user_wallet_address
+            payload.user_wallet_address, db
         )
         if existing_user:
             raise HTTPException(
@@ -30,13 +29,13 @@ class UserService:
                 detail=ErrorMessages.USER_ALREADY_EXISTS,
             )
 
-        self.user_repo.create_user(payload)
+        self.user_repo.create_user(payload, db)
         return {
             "status": "success",
             "message": "Successfully create a new user user.",
         }
 
-    def get_an_user(self, wallet_address: str) -> GetAnUserResponseDto:
+    def get_an_user(self, wallet_address: str, db) -> GetAnUserResponseDto:
         if not Web3.is_address(wallet_address):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -44,7 +43,7 @@ class UserService:
             )
         wallet_address = Web3.to_checksum_address(wallet_address)
 
-        user = self.user_repo.get_user_by_wallet_address(wallet_address)
+        user = self.user_repo.get_user_by_wallet_address(wallet_address, db)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -63,12 +62,12 @@ class UserService:
         return GetAnUserResponseDto(data=data)
 
     def update_an_user(
-        self, payload: UpdateUserRequestDto, user_image: UploadFile, user: dict
+        self, payload: UpdateUserRequestDto, user_image: UploadFile, user: dict, db
     ) -> UpdateUserResponseDto:
         wallet_address = user["wallet_address"]
 
         existing_user = self.user_repo.get_user_by_wallet_address(
-            wallet_address
+            wallet_address, db
         )
 
         if not existing_user:
@@ -81,5 +80,5 @@ class UserService:
             binary_file = user_image.file.read()
             user_image.file.close()
 
-        self.user_repo.update_an_user(wallet_address, payload, binary_file)
+        self.user_repo.update_an_user(wallet_address, payload, binary_file, db)
         return {"status": "success", "message": "Successfully edit user."}

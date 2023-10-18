@@ -7,16 +7,14 @@ from repositories.shopping_cart_item_repository import (
 from repositories.transaction_repository import TransactionRepository
 from repositories.user_repository import UserRepository
 from schemas.event.event_dto import TransactionItem
-from utils.database import get_session
 
 
 class EventService:
     def __init__(self) -> None:
-        self.db = get_session()
-        self.item_repo = ItemRepository(self.db)
-        self.user_repo = UserRepository(self.db)
-        self.transaction_repo = TransactionRepository(self.db)
-        self.shopping_cart_repo = ShoppingCartItemRepository(self.db)
+        self.item_repo = ItemRepository()
+        self.user_repo = UserRepository()
+        self.transaction_repo = TransactionRepository()
+        self.shopping_cart_repo = ShoppingCartItemRepository()
 
     async def handler(self, event: TransactionItem):
         transaction_smart_contract_id = event.transactionId
@@ -50,14 +48,12 @@ class EventService:
 
             item.item_owner_id = buyer.user_id
             if shopping_cart_item is not None:
-                self.db.query(ShoppingCartItemModel).filter(
+                db.query(ShoppingCartItemModel).filter(
                     ShoppingCartItemModel.shopping_cart_item_id
                     == shopping_cart_item.shopping_cart_item_id
                 ).delete()
-            self.db.commit()
+            db.commit()
             print("Transaction added successfully")
         except Exception as e:
             print(f"Error: {e}")
-            self.db.rollback()  # Rollback if an exception occurs
-        finally:
-            self.db.close()
+            db.rollback()
