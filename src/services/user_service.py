@@ -62,7 +62,11 @@ class UserService:
         return GetAnUserResponseDto(data=data)
 
     def update_an_user(
-        self, payload: UpdateUserRequestDto, user_image: UploadFile, user: dict, db
+        self,
+        payload: UpdateUserRequestDto,
+        user_image: UploadFile,
+        user: dict,
+        db,
     ) -> UpdateUserResponseDto:
         wallet_address = user["wallet_address"]
 

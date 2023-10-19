@@ -1,5 +1,4 @@
 from models.shopping_cart_item_model import ShoppingCartItemModel
-from models.transaction_model import TransactionModel
 from repositories.item_repository import ItemRepository
 from repositories.shopping_cart_item_repository import (
     ShoppingCartItemRepository,
@@ -7,6 +6,7 @@ from repositories.shopping_cart_item_repository import (
 from repositories.transaction_repository import TransactionRepository
 from repositories.user_repository import UserRepository
 from schemas.event.event_dto import TransactionItem
+from sqlalchemy.orm import Session
 
 
 class EventService:
@@ -16,18 +16,18 @@ class EventService:
         self.transaction_repo = TransactionRepository()
         self.shopping_cart_repo = ShoppingCartItemRepository()
 
-    async def handler(self, event: TransactionItem):
+    async def handler(self, event: TransactionItem, db: Session):
         transaction_smart_contract_id = event.transactionId
         owner = event.owner
         buyer = event.buyer
         item_id = event.item
 
-        owner = self.user_repo.get_user_by_wallet_address(owner)
-        buyer = self.user_repo.get_user_by_wallet_address(buyer)
+        owner = self.user_repo.get_user_by_wallet_address(owner, db)
+        buyer = self.user_repo.get_user_by_wallet_address(buyer, db)
         shopping_cart_item = self.shopping_cart_repo.get_shopping_cart_item_by_user_id_and_item_id(
-            buyer.user_id, item_id
+            buyer.user_id, item_id, db
         )
-        item = self.item_repo.get_item_by_id_maintain_session(item_id)
+        item = self.item_repo.get_item_by_id_maintain_session(item_id, db)
         if owner is None or buyer is None:
             print("Owner or buyer not found")
             return
@@ -40,10 +40,10 @@ class EventService:
 
         try:
             self.transaction_repo.add_transaction(
-                transaction_smart_contract_id, owner.user_id
+                transaction_smart_contract_id, owner.user_id, db
             )
             self.transaction_repo.add_transaction(
-                transaction_smart_contract_id, buyer.user_id
+                transaction_smart_contract_id, buyer.user_id, db
             )
 
             item.item_owner_id = buyer.user_id

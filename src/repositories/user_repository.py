@@ -24,7 +24,9 @@ class UserRepository:
         )
         db.add(user)
         db.commit()
-        new_user = self.get_user_by_wallet_address(payload.user_wallet_address, db)
+        new_user = self.get_user_by_wallet_address(
+            payload.user_wallet_address, db
+        )
 
         return new_user
 

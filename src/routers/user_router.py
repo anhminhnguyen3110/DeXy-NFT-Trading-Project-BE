@@ -25,7 +25,10 @@ user_service = UserService()
     status_code=status.HTTP_201_CREATED,
     response_model=CreateUserResponseDto,
 )
-async def create_user(payload: Annotated[dict, Depends(CreateUserRequestDto)], db: Session = Depends(get_db)):
+async def create_user(
+    payload: Annotated[dict, Depends(CreateUserRequestDto)],
+    db: Session = Depends(get_db),
+):
     return user_service.create_user(payload=payload, db=db)
 
 
@@ -39,7 +42,8 @@ async def get_an_user(
         ...,
         title="wallet_address",
         example="0x1aBA989D0703cE6CC651B6109d02b39a9651aE5d",
-    ), db: Session = Depends(get_db)
+    ),
+    db: Session = Depends(get_db),
 ):
     return user_service.get_an_user(wallet_address=wallet_address, db=db)
 
@@ -52,11 +56,7 @@ async def get_an_user(
 async def update_an_user(
     payload: UpdateUserRequestDto = Body(...),
     user_image: UploadFile = File(None),
-    user: dict = Depends(get_current_user), db: Session = Depends(get_db)
+    user: dict = Depends(get_current_user),
+    db: Session = Depends(get_db),
 ):
-    return user_service.update_an_user(
-        payload,
-        user_image,
-        user,
-        db
-    )
+    return user_service.update_an_user(payload, user_image, user, db)
