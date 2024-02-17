@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to the DeXy platform backend repository! DeXy is a platform designed for trading Non-Fungible Tokens (NFTs). This README provides an overview of the backend structure and implementation details.
+Welcome to the DeXy platform backend repository! DeXy is a platform designed for trading Non-Fungible Tokens (NFTs).
 
 ## Features
 
